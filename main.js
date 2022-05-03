@@ -32,13 +32,13 @@ class Table {
 
         if (cell == 4) {
           this.all.push("yellow")
-          td = `<td style="background-color: yellow;"> ${cell} </td>`;
+          td = `<td style="background-color: yellow;"></td>`;
         } else if (i == 0 || j == 0 || i == rows || j == cols || cell % 2 == 0) {
           this.all.push("black")
-          td = `<td style="background-color: black;"> ${cell} </td>`;
+          td = `<td style="background-color: black;"></td>`;
         } else {
           this.all.push("white")
-          td = `<td onclick="tap(${j},${i})">${cell}</td>`;
+          td = `<td onclick="tap(${j},${i})"></td>`;
         }
         
         // if i != 1
@@ -72,15 +72,16 @@ class Table {
 const table = new Table('myTable') //'.table', '.rows', '.columns'
 let plColors = ["red", "blue"]
 let nowPlayer = "red"
-plColor = "red"
+let plColor = "red"
 table.generate()
 
-const first = $("td");
+let first = $("td");
+let one = true
 
 
 
-
-function tap(row,col) {
+async function tap(row,col) {
+  let f = false
   const x = row;
   const y = col;
   let x_med_sq = Math.floor(x / 3)
@@ -91,12 +92,16 @@ function tap(row,col) {
   let fl = re[0]
   if ((table.all[y * 18 + x] == "white" && fl == false) || (fl == true && color == plColor && table.all[y * 18 + x] == "white")) {
     table.chColor(x, y, plColor)
+
+    f = true
   }
 
 
   // check(x_med_sq, y_med_sq)
-  check2()
-  chPlayer()
+  await check2()
+  if (f == true) {
+    chPlayer()
+  }
 }
 
 function haveColor(x_med_sq, y_med_sq) {
@@ -125,12 +130,8 @@ function onlyColorfull(x_medium_sq, y_medium_sq) {
       // y_pos = 3 * y_sq - y - 1
       x_pos = (x_sq-1) * 3 + x
       y_pos = (y_sq-1) * 3 + y
-      // console.log("x", x_pos)
-      // console.log("y", y_pos)
-      // console.log(table.whatIsColor(x_pos, y_pos))
       if (table.whatIsColor(x_pos,y_pos) == "white") {
         ret = false
-        // console.log("br")
       }
     }
   }
@@ -162,10 +163,11 @@ function BOOM(x_med_sq, y_med_sq) {
     }
     loops += 1
   }
+  gameEndCheck()
+  one = false
 }
 
-function check2() {
-  let one = true
+async function check2() {
   for (let i = 0; i <= 30; i++) {
     let zn_x = []
     let zn_y = []
@@ -185,17 +187,25 @@ function check2() {
     if (ret2 == true) {
       l = zn_x.length
       for (let a = 0; a <= l - 1; a++) { 
-        BOOM(zn_x[a], zn_y[a])
+        // BOOM(zn_x[a], zn_y[a])
+        console.log("1")
+        await _BOOM(zn_x[a], zn_y[a])
+        console.log("2")
       }
     }
     if (ret2 == false) {
       break
     }
   }
-  if (one == false) { 
-    gameEndCheck()
-    const one = false
-  }
+}
+
+_BOOM = async(x, y) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      BOOM(x, y)
+      resolve()
+    }, 1000)
+  })
 }
 
 function gameEndCheck() {
@@ -213,11 +223,11 @@ function gameEndCheck() {
   }
   if (RLoose == true) {
     console.log("Blue win")
-    let rest = true
+    rest = true
   } 
   if (BLoose == true) {
     console.log("Red win")
-    let rest = true
+    rest = true
   }
   if (rest == true) {
     rest = false
@@ -225,6 +235,7 @@ function gameEndCheck() {
     // if (otv == true) {
     //   fullRestart()
     fullRestart()
+    console.log("g")
   }
 }
 
@@ -297,8 +308,13 @@ function colorJamp(x_med_sq, y_med_sq) {
   }
 }
 
-// function draw(array) {
-//   first = array; // todo: global letiable
-//   this.all = array
-// }
-// draw("s")
+function draw() {
+  let fl = false
+  let timerId = setInterval(() => fl = true, 5000);
+  if (fl == true) {
+    fl = false
+    first = array; // todo: global letiable
+    this.all = array
+  }
+}
+// draw()
