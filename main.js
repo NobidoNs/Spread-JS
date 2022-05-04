@@ -17,6 +17,7 @@ class Table {
     this.rows = 17
     this.cols = 17
     this.all = []
+    this.f = false
 
     const rows = this.rows
     const cols = this.cols
@@ -67,13 +68,53 @@ class Table {
     this.all[n] = color
   }
 
+  tapOnWhite = (x, y) => {
+    let x_med_sq = Math.floor(x / 3)
+    let y_med_sq = Math.floor(y / 3)
+    let re = haveColor(x_med_sq, y_med_sq)
+    let color = re[1]
+    let fl = re[0]
+    if ((this.all[y * 18 + x] == "white" && fl == false) || (fl == true && color == plColor && this.all[y * 18 + x] == "white")) {
+      let n = y * (this.cols + 1) + x
+      this.chColor(x, y, plColor)
+      this.all[n] = plColor
+      this.f = true
+    }
+  }
+
+  colorJamp = (x_med_sq, y_med_sq) => {
+    recoloring(this, x_med_sq, y_med_sq)
+    for (let y = 0; y <= 2; y++) {
+      for (let x = 0; x <= 2; x++) {
+        let x1 = x_med_sq*3 + x
+        let y1 = y_med_sq*3 + y
+        let n = y1 * (this.cols + 1) + x1
+        if (this.all[n] == "white") {
+          this.all[n] = plColor
+          return null
+        }
+      }
+    }
+  }
+  chPlayer = () => {
+    if (this.f == true) {
+      if (plColor == "blue") {
+          plColor = "red"
+          return "red"
+      } else if (plColor == "red") {
+          plColor = "blue"
+      } else {
+          return "green"
+        }
+    }
+  }
 }
 
-const table = new Table('myTable') //'.table', '.rows', '.columns'
+const table1 = new Table('myTable') //'.table', '.rows', '.columns'
 let plColors = ["red", "blue"]
 let nowPlayer = "red"
 let plColor = "red"
-table.generate()
+table1.generate()
 
 let first = $("td");
 let one = true
@@ -81,30 +122,15 @@ let one = true
 
 
 async function tap(row,col) {
-  let f = false
   const x = row;
   const y = col;
-  let x_med_sq = Math.floor(x / 3)
-  let y_med_sq = Math.floor(y / 3)
   // console.log('taped', x, y)
-  re = haveColor(x_med_sq, y_med_sq)
-  let color = re[1]
-  let fl = re[0]
-  if ((table.all[y * 18 + x] == "white" && fl == false) || (fl == true && color == plColor && table.all[y * 18 + x] == "white")) {
-    table.chColor(x, y, plColor)
-
-    f = true
-  }
-
-
-  // check(x_med_sq, y_med_sq)
-  await check2()
-  if (f == true) {
-    chPlayer()
-  }
+  table1.tapOnWhite(x, y)
+  await check2(table1)
+  table1.chPlayer()
 }
 
-function haveColor(x_med_sq, y_med_sq) {
+function haveColor(table, x_med_sq, y_med_sq) {  // +
   for (let y = 0; y <= 2; y++) {
     for (let x = 0; x <= 2; x++) {
       let x_pos = x_med_sq*3 + x
@@ -120,7 +146,7 @@ function haveColor(x_med_sq, y_med_sq) {
 
 
 
-function onlyColorfull(x_medium_sq, y_medium_sq) {
+function onlyColorfull(table, x_medium_sq, y_medium_sq) {  // +
   let ret = true
   const x_sq = x_medium_sq + 1
   const y_sq = y_medium_sq + 1
@@ -138,12 +164,12 @@ function onlyColorfull(x_medium_sq, y_medium_sq) {
   return ret
 }
 
-function BOOM(x_med_sq, y_med_sq) {
+function BOOM(table, x_med_sq, y_med_sq) {
   let x_centr = x_med_sq * 3 + 1
   let y_centr = y_med_sq * 3 + 1
   let x_to_activated = [2, -2, 0, 0]
   let y_to_activated = [0, 0, 2, -2]
-  clear_medium_sq(x_med_sq, y_med_sq)
+  clear_medium_sq(table, x_med_sq, y_med_sq)
   let loops = 0
   for (let i = 0; i <= 3; i++) {
     let x1 = x_centr - x_to_activated[loops]
@@ -152,22 +178,24 @@ function BOOM(x_med_sq, y_med_sq) {
     let two_x_medium_sq = Math.floor(x1 / 3)
     let two_y_medium_sq = Math.floor(y1 / 3)
     let z = table.whatIsColor(x1, y1) 
-    
+    let n = y1 * (table.cols + 1) + x1
+
     // colorJamp(two_x_medium_sq, two_y_medium_sq, plColor)
 
     if (z == "white") {
-      table.chColor(x1, y1, plColor)
+      table.all[n] = plColor
       recoloring(two_x_medium_sq, two_y_medium_sq)
     } else if (z == plColors[0] || z == plColors[1]) {
-      colorJamp(two_x_medium_sq, two_y_medium_sq, plColor)
+      table.colorJamp(two_x_medium_sq, two_y_medium_sq, plColor)
     }
     loops += 1
   }
-  gameEndCheck()
+  gameEndCheck(table)
   one = false
 }
 
-async function check2() {
+// +
+async function check2(table) {  
   for (let i = 0; i <= 30; i++) {
     let zn_x = []
     let zn_y = []
@@ -175,7 +203,7 @@ async function check2() {
     let ret2 = false
     for (let y = 0; y <= 5; y++) {
       for (let x = 0; x <= 5; x++) {
-        ret = onlyColorfull(x, y)
+        ret = onlyColorfull(table, x, y)
         if (ret == true) {
           zn_x.push(x)
           zn_y.push(y)
@@ -189,7 +217,7 @@ async function check2() {
       for (let a = 0; a <= l - 1; a++) { 
         // BOOM(zn_x[a], zn_y[a])
         console.log("1")
-        await _BOOM(zn_x[a], zn_y[a])
+        await _BOOM(table, zn_x[a], zn_y[a])
         console.log("2")
       }
     }
@@ -199,16 +227,18 @@ async function check2() {
   }
 }
 
-_BOOM = async(x, y) => {
+// +
+_BOOM = async(table, x, y) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      BOOM(x, y)
+      BOOM(table, x, y)
       resolve()
     }, 1000)
   })
 }
 
-function gameEndCheck() {
+// +
+function gameEndCheck(table) {
   let RLoose = true
   let BLoose = true
   let rest = false
@@ -234,12 +264,12 @@ function gameEndCheck() {
     // otv = restButton()
     // if (otv == true) {
     //   fullRestart()
-    fullRestart()
+    fullRestart(table)
     console.log("g")
   }
 }
 
-function fullRestart()  {
+function fullRestart(table)  {
   one = true
   for (let x = 0; x <= 17; x++) {
     for (let y = 0; y <= 17; y++) {
@@ -252,7 +282,7 @@ function fullRestart()  {
 
 // function restButton()
 
-function clear_medium_sq(x_med_sq, y_med_sq) {
+function clear_medium_sq(table, x_med_sq, y_med_sq) {
   for (let y = 0; y <= 2; y++) {
     for (let x = 0; x <= 2; x++) {
       let x1 = (x_med_sq * 3) + x
@@ -266,18 +296,7 @@ function clear_medium_sq(x_med_sq, y_med_sq) {
 }
 
 
-function chPlayer() {
-  if (plColor == "blue") {
-      plColor = "red"
-      return "red"
-  } else if (plColor == "red") {
-      plColor = "blue"
-  } else {
-      return "green"
-    }
-}
-
-function recoloring(x_med_sq, y_med_sq) {
+function recoloring(table, x_med_sq, y_med_sq) {
   for (let y = 0; y <= 2; y++) {
     for (let x = 0; x <= 2; x++) {
       x1 = (x_med_sq*3) + x
@@ -285,24 +304,6 @@ function recoloring(x_med_sq, y_med_sq) {
       a = table.whatIsColor(x1, y1)
       if (a == plColors[0] || a == plColors[1]) {
         table.chColor(x1, y1, plColor)
-      }
-    }
-  }
-}
-
-function colorJamp(x_med_sq, y_med_sq) {
-  // console.log("l")
-  recoloring(x_med_sq, y_med_sq)
-  for (let y = 0; y <= 2; y++) {
-    for (let x = 0; x <= 2; x++) {
-      x1 = x_med_sq*3 + x
-      y1 = y_med_sq*3 + y
-      n = y1 * 18 + x1
-      // console.log(x1)
-      if (table.all[n] == "white") {
-        table.chColor(x1, y1, plColor)
-        return null
-        // console.log("l")
       }
     }
   }
