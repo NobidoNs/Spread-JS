@@ -4,6 +4,7 @@ class Table {
   constructor (tableSelector, rowsSelector, columnsSelector) {
     this.rows = 17
     this.cols = 17
+    this._a = 1
     this.all = []
     this.f = false
     this.rowsSelector = rowsSelector
@@ -14,6 +15,36 @@ class Table {
     // this.allRects = document.querySelectorAll()
     console.log(this.tableObj)
     // console.log(this.allRects)
+  }
+
+  clone() {
+    const tbl = new this.constructor()
+    // this.copy(tbl)
+    tbl.init(this)
+    return tbl
+  }
+
+  // copy(tbl) {
+  //   tbl.a = 5
+  //   tbl.rows = this.rows
+  //   // tbl.cols = this.cols
+  // }
+
+  // get cols() {
+  //   return this.cols
+  // }
+
+  get a() {
+    return this._a
+  }
+
+  // set a(w) {
+  //   this._a = w
+  // }
+
+  init(tbl) {
+    this._a = tbl.a
+    this.all = [...tbl.all]
   }
 
   generate = () => {
@@ -63,25 +94,41 @@ class Table {
     return color
   }
 
-  chColor = (x, y, color) => {
+  chColor = (x, y, color, table) => {
     let n = y * (this.cols+1) + x
-    let el = first[n]; // todo: global letiable
-    $(el).css('background-color', color);
-    this.all[n] = color
+    if (n <= 324) {
+      let el = first[n]; // todo: global letiable
+      $(el).css('background-color', color);
+      table.all[n] = color
+    }
   }
 
-  tapOnTable = async(x, y, table1) => {
+  tapOnTable = async(x, y) => {
     let x_med_sq = Math.floor(x / 3)
     let y_med_sq = Math.floor(y / 3)
     let re = haveColor(this, x_med_sq, y_med_sq)
     let color = re[1]
     let fl = re[0]
+    const table2 = this.clone()
     if ((this.all[y * 18 + x] == "white" && fl == false) || (fl == true && color == plColor && this.all[y * 18 + x] == "white")) {
       let n = y * (this.cols + 1) + x
-      this.chColor(x, y, plColor)
+      this.chColor(x, y, plColor, table2)
       this.all[n] = plColor
       this.f = true
-      await check2(table1)
+      // console.log("6")
+      for (let y = 0; y <= 20; y++) {
+        let fl = await check2(table2)
+        if (fl == false) {
+          this.init(table2)
+          this.draw(table2)
+          await pause()
+          fl = true
+        }
+        else {
+          break
+        }
+      }
+      // console.log("5")
       this.chPlayer()
     }
   }
@@ -95,7 +142,7 @@ class Table {
         let n = y1 * (this.cols + 1) + x1
         if (this.all[n] == "white") {
           this.all[n] = plColor
-          this.chColor(x1, y1, plColor)
+          // this.chColor(x1, y1, plColor)
           return null
         }
       }
@@ -113,11 +160,21 @@ class Table {
         }
     }
   }
+  draw = (table) => {
+    // console.log(this.all.length)
+    for (let n = 0; n < this.all.length - 1; n++) {
+      let y = Math.floor(n / (this.cols + 1))
+      let x = n - y*(this.cols + 1)
+      let cl = this.all[n]
+      this.chColor(x, y, cl, table)
+      // console.log("x =", x, "y =", y)
+    }
+  console.log(this.all[33])
+  }
 }
 
 const table1 = new Table('myTable') //'.table', '.rows', '.columns'
 let plColors = ["red", "blue"]
-let nowPlayer = "red"
 let plColor = "red"
 table1.generate()
 
@@ -126,11 +183,12 @@ let one = true
 
 
 
+
 function tap(row,col) {
   const x = row;
   const y = col;
   // console.log('taped', x, y)
-  table1.tapOnTable(x, y, table1)
+  table1.tapOnTable(x, y)
 }
 
 function haveColor(table, x_med_sq, y_med_sq) {  // +
@@ -189,7 +247,7 @@ function BOOM(table, x_med_sq, y_med_sq) {
       table.all[n] = plColor
       recoloring(table, two_x_medium_sq, two_y_medium_sq)
     } else if (z == plColors[0] || z == plColors[1]) {
-      table1.colorJamp(two_x_medium_sq, two_y_medium_sq, plColor)
+      table.colorJamp(two_x_medium_sq, two_y_medium_sq, plColor)
     }
     loops += 1
   }
@@ -198,43 +256,45 @@ function BOOM(table, x_med_sq, y_med_sq) {
 }
 
 // +
-async function check2(table) {  
-  for (let i = 0; i <= 30; i++) {
-    let zn_x = []
-    let zn_y = []
-    let ret = false
-    let ret2 = false
-    for (let y = 0; y <= 5; y++) {
-      for (let x = 0; x <= 5; x++) {
-        ret = onlyColorfull(table, x, y)
-        if (ret == true) {
-          zn_x.push(x)
-          zn_y.push(y)
-          ret2 = true
-        }
+async function check2(table) {
+  let ret3 = true
+  let zn_x = []
+  let zn_y = []
+  let ret = false
+  let ret2 = false
+  for (let y = 0; y <= 5; y++) {
+    for (let x = 0; x <= 5; x++) {
+      ret = onlyColorfull(table, x, y)
+      if (ret == true) {
+        zn_x.push(x)
+        zn_y.push(y)
+        ret2 = true
+        console.log(zn_x)
       }
-    }
-
-    if (ret2 == true) {
-      l = zn_x.length
-      for (let a = 0; a <= l - 1; a++) { 
-        // BOOM(zn_x[a], zn_y[a])
-        console.log("1")
-        await _BOOM(table, zn_x[a], zn_y[a])
-        console.log("2")
-      }
-    }
-    if (ret2 == false) {
-      break
     }
   }
+
+  if (ret2 == true) {
+    l = zn_x.length
+    for (let a = 0; a <= l - 1; a++) { 
+      // BOOM(zn_x[a], zn_y[a])
+      // console.log("1")
+      BOOM(table, zn_x[a], zn_y[a])
+      // console.log("2")
+      // console.log(zn_x[a], zn_y[a])
+    }
+    return new Promise((resolve) => resolve(false))
+  }
+  // if (ret2 == false) {
+  //   return new Promise((resolve) => resolve(false))
+  // }
+return new Promise((resolve) => resolve(true))
 }
 
 // +
-_BOOM = async(table, x, y) => {
+pause = async() => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      BOOM(table, x, y)
       resolve()
     }, 1000)
   })
@@ -277,6 +337,8 @@ function fullRestart(table)  {
   for (let x = 0; x <= 17; x++) {
     for (let y = 0; y <= 17; y++) {
       if (table.whatIsColor(x, y) == plColors[1] || table.whatIsColor(x, y) == plColors[0]) {
+        n = y * (table.cols + 1) + x
+        table.all[n] = "white"
         table.chColor(x, y, "white")
       }
     }
@@ -292,7 +354,9 @@ function clear_medium_sq(table, x_med_sq, y_med_sq) {
       let y1 = (y_med_sq * 3) + y
       let z = table.whatIsColor(x1, y1)
       if (z == plColors[0] || z == plColors[1]) {
-        table.chColor(x1, y1, "white")
+        n = y1 * (table.cols + 1) + x1
+        table.all[n] = "white"
+        // table.chColor(x1, y1, "white")
       }
     }
   }
@@ -306,19 +370,10 @@ function recoloring(table, x_med_sq, y_med_sq) {
       y1 = (y_med_sq*3) + y
       a = table.whatIsColor(x1, y1)
       if (a == plColors[0] || a == plColors[1]) {
-        table.chColor(x1, y1, plColor)
+        n = y1 * (table.cols + 1) + x1
+        table.all[n] = plColor
+        // table.chColor(x1, y1, plColor)
       }
     }
   }
 }
-
-function draw() {
-  let fl = false
-  let timerId = setInterval(() => fl = true, 5000);
-  if (fl == true) {
-    fl = false
-    first = array; // todo: global letiable
-    this.all = array
-  }
-}
-// draw()
