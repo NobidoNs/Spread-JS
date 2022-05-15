@@ -1,5 +1,3 @@
-//import {Table} from './table.js'
-//const Table = require('./table')
 class Table {
   constructor (tableSelector, rowsSelector, columnsSelector) {
     this.rows = 17
@@ -11,7 +9,7 @@ class Table {
     this.columnsSelector = columnsSelector
     // this.tableObj = document.querySelector(tableSelector)
     this.tableObj = $(`#${tableSelector}`)
-    
+
     // this.allRects = document.querySelectorAll()
     console.log(this.tableObj)
     // console.log(this.allRects)
@@ -74,7 +72,7 @@ class Table {
           this.all.push("white")
           td = `<td onclick="tap(${j},${i})"></td>`;
         }
-        
+
         // if i != 1
 
         tr += td
@@ -116,10 +114,10 @@ class Table {
       this.all[n] = plColor
       this.f = true
       // console.log("6")
+      this.init(table2)
       for (let y = 0; y <= 20; y++) {
         let fl = await check2(table2)
         if (fl == false) {
-          this.init(table2)
           this.draw(table2)
           await pause()
           fl = true
@@ -162,14 +160,13 @@ class Table {
   }
   draw = (table) => {
     // console.log(this.all.length)
-    for (let n = 0; n < this.all.length - 1; n++) {
-      let y = Math.floor(n / (this.cols + 1))
-      let x = n - y*(this.cols + 1)
-      let cl = this.all[n]
+    for (let n = 0; n < table.all.length - 1; n++) {
+      let y = Math.floor(n / (table.cols + 1))
+      let x = n - y*(table.cols + 1)
+      let cl = table.all[n]
       this.chColor(x, y, cl, table)
       // console.log("x =", x, "y =", y)
     }
-  console.log(this.all[33])
   }
 }
 
