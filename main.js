@@ -118,7 +118,7 @@ class Table {
         const fl = await check2(table2)
         if (fl == false) {
           this.draw(table2)
-          await pause()
+          await pause(1000)
         }
         else {
           break
@@ -179,12 +179,15 @@ let one = true
 
 
 
-
-function tap(row,col) {
+let onReady = false
+async function tap(row,col) {
   const x = row;
   const y = col;
-  // console.log('taped', x, y)
-  table1.tapOnTable(x, y)
+  if (onReady) return
+  console.log('taped', x, y)
+  onReady = true
+  await table1.tapOnTable(x, y)
+  onReady = false
 }
 
 function haveColor(table, x_med_sq, y_med_sq) {  // +
@@ -288,11 +291,11 @@ return new Promise((resolve) => resolve(true))
 }
 
 // +
-pause = async() => {
+pause = async(time) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve()
-    }, 1000)
+    }, time)
   })
 }
 
@@ -324,18 +327,18 @@ function gameEndCheck(table) {
     // if (otv == true) {
     //   fullRestart()
     fullRestart(table)
-    console.log("g")
   }
 }
 
-function fullRestart(table)  {
+async function fullRestart(table)  {
   one = true
+  await pause(5000)
   for (let x = 0; x <= 17; x++) {
     for (let y = 0; y <= 17; y++) {
       if (table.whatIsColor(x, y) == plColors[1] || table.whatIsColor(x, y) == plColors[0]) {
         n = y * (table.cols + 1) + x
         table.all[n] = "white"
-        table.chColor(x, y, "white")
+        table.draw(table)
       }
     }
   }
