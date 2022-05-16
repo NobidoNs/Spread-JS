@@ -7,29 +7,45 @@
 
   <title>A Basic HTML5 Template</title>
 
+  <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="./styles.css">
 
 </head>
 
 <body>
   <!-- your content here... -->
-  <script src="./jquery-3.6.0.min.js"></script>
+  <script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
 
-<main class="generator">
-  <!-- <section class="controls">
-    <label>
-      Rows :
-      <input class="rows" type="number" min="0" value="1">
-    </label>
-    <label>
-      Columns :
-      <input class="columns" type="number" min="0" value="1">
-    </label>
-  </section> -->
-  <!-- <button class="button">Create table</button> -->
-</main>
-<table class="table" id="myTable" cellpadding="" cellspacing=""></table>
+  <main class="generator">
+    <!-- <section class="controls">
+      <label>
+        Rows :
+        <input class="rows" type="number" min="0" value="1">
+      </label>
+      <label>
+        Columns :
+        <input class="columns" type="number" min="0" value="1">
+      </label>
+    </section> -->
+    <!-- <button class="button">Create table</button> -->
+  </main>
 
-<script src="./main.js"></script>
+  <table class="table" id="myTable" cellpadding="" cellspacing=""></table>
+
+  <script src="./main.js"></script>
+  
+
+  <!-- <div class="b-container">
+    Sample Text
+    <a href="javascript:PopUpShow()">Show popup</a>
+  </div> -->
+  <div class="b-popup" id="popup1">
+    <div class="b-popup-content">
+      <a id="whoIsWin"> </a>
+      <a class="button" href="javascript:PopUpHide()">Start</a> 
+    </div>
+  </div>
+
+
 </body>
 </html>

@@ -176,11 +176,11 @@ table1.generate()
 
 let first = $("td");
 let one = true
-
-
-
 let onReady = false
+
+
 async function tap(row,col) {
+  PopUpShow("blue")
   const x = row;
   const y = col;
   if (onReady) return
@@ -315,22 +315,24 @@ function gameEndCheck(table) {
   }
   if (RLoose == true) {
     console.log("Blue win")
+    COW = "blue"
     rest = true
   } 
   if (BLoose == true) {
     console.log("Red win")
     rest = true
+    COW = "red"
   }
   if (rest == true) {
     rest = false
     // otv = restButton()
     // if (otv == true) {
     //   fullRestart()
-    fullRestart(table)
+    fullRestart(table, COW)
   }
 }
 
-async function fullRestart(table)  {
+async function fullRestart(table, colorOfWin)  {
   one = true
   await pause(5000)
   for (let x = 0; x <= 17; x++) {
@@ -342,6 +344,8 @@ async function fullRestart(table)  {
       }
     }
   }
+  
+  PopUpShow(colorOfWin)
 }
 
 // function restButton()
@@ -375,4 +379,13 @@ function recoloring(table, x_med_sq, y_med_sq) {
       }
     }
   }
+}
+
+function PopUpHide(){
+  $("#popup1").hide();
+}
+function PopUpShow(inp){
+  out = inp + " Win"
+  $("#popup1").show();
+  $("#whoIsWin").html(out)
 }
