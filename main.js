@@ -177,10 +177,11 @@ table1.generate()
 let first = $("td");
 let one = true
 let onReady = false
+let redScore = 0
+let blueScore = 0
 
 
 async function tap(row,col) {
-  PopUpShow("blue")
   const x = row;
   const y = col;
   if (onReady) return
@@ -250,6 +251,8 @@ function BOOM(table, x_med_sq, y_med_sq) {
     }
     loops += 1
   }
+  setBlueScore()
+  setRedScore()
   gameEndCheck(table)
   one = false
 }
@@ -375,6 +378,12 @@ function recoloring(table, x_med_sq, y_med_sq) {
       if (a == plColors[0] || a == plColors[1]) {
         n = y1 * (table.cols + 1) + x1
         table.all[n] = plColor
+        if (plColor == "blue" && a == plColors[0]) {
+          blueScore += 1
+        }
+        else if (plColor == "red" && a == plColors[1]) {
+          redScore += 1
+        }
         // table.chColor(x1, y1, plColor)
       }
     }
@@ -383,9 +392,19 @@ function recoloring(table, x_med_sq, y_med_sq) {
 
 function PopUpHide(){
   $("#popup1").hide();
+  blueScore = 0
+  redScore = 0
 }
 function PopUpShow(inp){
   out = inp + " Win"
   $("#popup1").show();
   $("#whoIsWin").html(out)
+}
+
+function setBlueScore() {
+  $("#blueScore").html(blueScore)
+}
+
+function setRedScore() {
+  $("#redScore").html(redScore)
 }

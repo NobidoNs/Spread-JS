@@ -9,6 +9,7 @@
     padding:10px;
     font-size:30px;
     color: #fff;
+    text-align: center;
 }
 .b-popup{
     width:100%;
@@ -17,16 +18,40 @@
     overflow:hidden;
     position:fixed;
     top:10px;
+    text-align: center;
     
 }
-.b-popup .b-popup-content{
-    margin:25% auto 0px auto;
+.b-popup-content{
+    margin:15% auto 0px auto;
     width:100px;
     height: 40px;
     padding:10px;
     background-color: #c5c5c54f;
     border-radius:5px;
-    box-shadow: 0px 0px 10px rgb(0, 0, 0);
+    text-align: center;
+    box-shadow: 0px 0px 20px rgb(0, 255, 0);
+}
+
+.b-popup-content2{
+    margin:0% auto 0px auto;
+    width:100px;
+    height: 20px;
+    padding:10px;
+    background-color: #c5c5c54f;
+    border-radius:5px;
+    text-align: center;
+    box-shadow: 0px 0px 10px rgb(0, 0, 255);
+}
+
+.b-popup-content3{
+    margin:1% auto 0px auto;
+    width:100px;
+    height: 20px;
+    padding:10px;
+    background-color: #c5c5c54f;
+    border-radius:5px;
+    text-align: center;
+    box-shadow: 0px 0px 10px rgb(255, 0, 0);
 }
 
 .button {
