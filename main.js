@@ -147,14 +147,16 @@ class Table {
   }
   chPlayer = () => {
     if (this.f == true) {
-      if (plColor == "blue") {
-          plColor = "red"
-          return "red"
-      } else if (plColor == "red") {
-          plColor = "blue"
-      } else {
-          return "green"
+      for (let i = 0; i <= plColors.length - 1; i++) {
+        if (plColor == plColors[i]) {
+          if (i == plColors.length - 1) {
+            plColor = plColors[0]
+          } else {
+            plColor = plColors[i+1]
+            return plColor
+          }
         }
+      }
     }
   }
   draw = (table) => {
@@ -170,7 +172,7 @@ class Table {
 }
 
 const table1 = new Table('myTable') //'.table', '.rows', '.columns'
-let plColors = ["red", "blue"]
+let plColors = []
 let plColor = "red"
 table1.generate()
 
@@ -179,7 +181,8 @@ let one = true
 let onReady = false
 let redScore = 0
 let blueScore = 0
-
+let greenScore = 0
+let violetScore = 0
 
 async function tap(row,col) {
   const x = row;
@@ -196,9 +199,11 @@ function haveColor(table, x_med_sq, y_med_sq) {  // +
     for (let x = 0; x <= 2; x++) {
       let x_pos = x_med_sq*3 + x
       let y_pos = y_med_sq*3 + y
-      if (table.whatIsColor(x_pos, y_pos) == plColors[0] || table.whatIsColor(x_pos, y_pos) == plColors[1]) {
-        let color = table.whatIsColor(x_pos, y_pos)
-        return [true, color]
+      for (let p = 0; p <= plColors.length - 1; p++) {
+        if (table.whatIsColor(x_pos, y_pos) == plColors[p]) {
+          let color = table.whatIsColor(x_pos, y_pos)
+          return [true, color]
+        }
       }
     }
   }
@@ -246,8 +251,12 @@ function BOOM(table, x_med_sq, y_med_sq) {
     if (z == "white") {
       table.all[n] = plColor
       recoloring(table, two_x_medium_sq, two_y_medium_sq)
-    } else if (z == plColors[0] || z == plColors[1]) {
-      table.colorJamp(two_x_medium_sq, two_y_medium_sq, plColor)
+    } else {
+      for (let p = 0; p <= plColor.length - 1; p++) {
+        if (z == plColors[p]) {
+          table.colorJamp(two_x_medium_sq, two_y_medium_sq, plColor)
+        }
+      }
     }
     loops += 1
   }
@@ -306,22 +315,25 @@ pause = async(time) => {
 function gameEndCheck(table) {
   let RLoose = true
   let BLoose = true
+  let GLoose = true
+  let VLoose = true
   let rest = false
+  let flags = [RLoose, BLoose, GLoose, VLoose]
   for (let x = 0; x <= 17; x++) {
     for (let y = 0; y <= 17; y++) {
-      if (table.whatIsColor(x, y) == plColors[0]) {
-        RLoose = false
-      } else if (table.whatIsColor(x, y) == plColors[1]) {
-        BLoose = false
+      for (let p = 0; p <= plColors.length - 1; p++) {
+        if (table.whatIsColor(x, y) == plColors[p]) {
+          flags[p] = false
+        }
       }
     }
   }
-  if (RLoose == true) {
+  if (flags[0] == true) {
     console.log("Blue win")
-    COW = "blue"
+    COW = "blue"  // Color Of Win
     rest = true
   } 
-  if (BLoose == true) {
+  if (flags[1] == true) {
     console.log("Red win")
     rest = true
     COW = "red"
@@ -340,10 +352,12 @@ async function fullRestart(table, colorOfWin)  {
   await pause(5000)
   for (let x = 0; x <= 17; x++) {
     for (let y = 0; y <= 17; y++) {
-      if (table.whatIsColor(x, y) == plColors[1] || table.whatIsColor(x, y) == plColors[0]) {
-        n = y * (table.cols + 1) + x
-        table.all[n] = "white"
-        table.draw(table)
+      for (let p = 0; p <= plColors.length - 1; p++) {
+        if (table.whatIsColor(x, y) == plColors[p]) {
+          n = y * (table.cols + 1) + x
+          table.all[n] = "white"
+          table.draw(table)
+        }
       }
     }
   }
@@ -359,10 +373,12 @@ function clear_medium_sq(table, x_med_sq, y_med_sq) {
       let x1 = (x_med_sq * 3) + x
       let y1 = (y_med_sq * 3) + y
       let z = table.whatIsColor(x1, y1)
-      if (z == plColors[0] || z == plColors[1]) {
-        n = y1 * (table.cols + 1) + x1
-        table.all[n] = "white"
-        // table.chColor(x1, y1, "white")
+      for (let p = 0; p <= plColors.length - 1; p++) {
+        if (z == plColors[p]) {
+          n = y1 * (table.cols + 1) + x1
+          table.all[n] = "white"
+          // table.chColor(x1, y1, "white")
+        }
       }
     }
   }
@@ -370,35 +386,61 @@ function clear_medium_sq(table, x_med_sq, y_med_sq) {
 
 
 function recoloring(table, x_med_sq, y_med_sq) {
+  let scoresColor = [blueScore, redScore, greenScore, violetScore]
   for (let y = 0; y <= 2; y++) {
     for (let x = 0; x <= 2; x++) {
       x1 = (x_med_sq*3) + x
       y1 = (y_med_sq*3) + y
       a = table.whatIsColor(x1, y1)
-      if (a == plColors[0] || a == plColors[1]) {
-        n = y1 * (table.cols + 1) + x1
-        table.all[n] = plColor
-        if (plColor == "blue" && a == plColors[0]) {
-          blueScore += 1
+      for (let p = 0; p <= plColors.length - 1; p++) {
+        if (a == plColors[p]) {
+          n = y1 * (table.cols + 1) + x1
+          table.all[n] = plColor
+
+          if (plColor == plColors[p] && a == plColors[p]) {
+            scoresColor[p] += 1
+          }
         }
-        else if (plColor == "red" && a == plColors[1]) {
-          redScore += 1
-        }
-        // table.chColor(x1, y1, plColor)
       }
     }
   }
 }
 
-function PopUpHide(){
-  $("#popup1").hide();
+function twoPlayers() {
+  PopUpButtonHide()
+  plColors = ["red", "blue"]
+}
+
+function threePlayers() {
+  PopUpButtonHide()
+  plColors = ["red", "blue", "green"]
+}
+
+function fourPlayers() {
+  PopUpButtonHide()
+  plColors = ["red", "blue", "green", "violet"]
+}
+
+function PopUpButtonHide(){
+  $("#popuppl").hide();
   blueScore = 0
   redScore = 0
 }
+
+function PopUpHide(){
+  $("#popupst").hide();
+  blueScore = 0
+  redScore = 0
+}
+
 function PopUpShow(inp){
   out = inp + " Win"
-  $("#popup1").show();
+  $("#popupst").show();
   $("#whoIsWin").html(out)
+}
+
+function PopUpPlayersShow(){
+  $("#popuppl").show();
 }
 
 function setBlueScore() {
