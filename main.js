@@ -97,7 +97,7 @@ class Table {
     if (n <= 324) {
       let el = first[n]; // todo: global letiable
       $(el).css('background-color', color);
-      table.all[n] = color
+      table1.all[n] = color
     }
   }
 
@@ -110,8 +110,8 @@ class Table {
     const table2 = this.clone()
     if ((this.all[y * 18 + x] == "white" && fl == false) || (fl == true && color == plColor && this.all[y * 18 + x] == "white")) {
       let n = y * (this.cols + 1) + x
-      this.chColor(x, y, plColor, table2)
-      this.all[n] = plColor
+      // this.chColor(x, y, plColor, table2)
+      table2.all[n] = plColor
       this.f = true
       // console.log("6")
       for (let y = 0; y <= 20; y++) {
@@ -124,13 +124,14 @@ class Table {
           break
         }
       }
+      this.draw(table2)
       this.init(table2)
       // console.log("5")
       this.chPlayer()
     }
   }
 
-  colorJamp = (x_med_sq, y_med_sq) => {
+  colorJamp = (x_med_sq, y_med_sq, table) => {
     recoloring(this, x_med_sq, y_med_sq)
     for (let y = 0; y <= 2; y++) {
       for (let x = 0; x <= 2; x++) {
@@ -165,9 +166,27 @@ class Table {
       let y = Math.floor(n / (table.cols + 1))
       let x = n - y*(table.cols + 1)
       let cl = table.all[n]
+      this.all[n] = cl
       this.chColor(x, y, cl, table)
       // console.log("x =", x, "y =", y)
     }
+  }
+  fullRestart = async(colorOfWin, table) => {
+    one = true
+    await pause(3000)
+    for (let x = 0; x <= 17; x++) {
+      for (let y = 0; y <= 17; y++) {
+        for (let p = 0; p <= plColors.length - 1; p++) {
+          if (table.whatIsColor(x, y) == plColors[p]) {
+            n = y * (table.cols + 1) + x
+            table.all[n] = "white"
+            table.draw(table)
+          }
+        }
+      }
+    }
+    
+    PopUpShow(colorOfWin)
   }
 }
 
@@ -246,7 +265,6 @@ function BOOM(table, x_med_sq, y_med_sq) {
     let z = table.whatIsColor(x1, y1) 
     let n = y1 * (table.cols + 1) + x1
 
-    // colorJamp(two_x_medium_sq, two_y_medium_sq, plColor)
 
     if (z == "white") {
       table.all[n] = plColor
@@ -254,7 +272,7 @@ function BOOM(table, x_med_sq, y_med_sq) {
     } else {
       for (let p = 0; p <= plColor.length - 1; p++) {
         if (z == plColors[p]) {
-          table.colorJamp(two_x_medium_sq, two_y_medium_sq, plColor)
+          table.colorJamp(two_x_medium_sq, two_y_medium_sq, plColor, table)
         }
       }
     }
@@ -343,27 +361,10 @@ function gameEndCheck(table) {
     // otv = restButton()
     // if (otv == true) {
     //   fullRestart()
-    fullRestart(table, COW)
+    table.fullRestart(COW, table)
   }
 }
 
-async function fullRestart(table, colorOfWin)  {
-  one = true
-  await pause(5000)
-  for (let x = 0; x <= 17; x++) {
-    for (let y = 0; y <= 17; y++) {
-      for (let p = 0; p <= plColors.length - 1; p++) {
-        if (table.whatIsColor(x, y) == plColors[p]) {
-          n = y * (table.cols + 1) + x
-          table.all[n] = "white"
-          table.draw(table)
-        }
-      }
-    }
-  }
-  
-  PopUpShow(colorOfWin)
-}
 
 // function restButton()
 
