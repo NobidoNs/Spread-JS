@@ -174,6 +174,10 @@ class Table {
   fullRestart = async(colorOfWin, table) => {
     one = true
     await pause(3000)
+    redScore = 0
+    blueScore = 0
+    greenScore = 0
+    violetScore = 0
     for (let x = 0; x <= 17; x++) {
       for (let y = 0; y <= 17; y++) {
         for (let p = 0; p <= plColors.length - 1; p++) {
@@ -185,7 +189,8 @@ class Table {
         }
       }
     }
-    
+    setBlueScore()
+    setRedScore()
     PopUpShow(colorOfWin)
   }
 }
@@ -278,6 +283,7 @@ function BOOM(table, x_med_sq, y_med_sq) {
     }
     loops += 1
   }
+  console.log(redScore)
   setBlueScore()
   setRedScore()
   gameEndCheck(table)
@@ -398,8 +404,13 @@ function recoloring(table, x_med_sq, y_med_sq) {
           n = y1 * (table.cols + 1) + x1
           table.all[n] = plColor
 
-          if (plColor == plColors[p] && a == plColors[p]) {
+          if (plColor != plColors[p]) {
             scoresColor[p] += 1
+            blueScore = scoresColor[0]
+            redScore = scoresColor[1]
+            greenScore = scoresColor[2]
+            violetScore = scoresColor[3]
+            console.log(redScore)
           }
         }
       }
@@ -426,12 +437,16 @@ function PopUpButtonHide(){
   $("#popuppl").hide();
   blueScore = 0
   redScore = 0
+  greenScore = 0
+  violetScore = 0
 }
 
 function PopUpHide(){
   $("#popupst").hide();
   blueScore = 0
   redScore = 0
+  greenScore = 0
+  violetScore = 0
 }
 
 function PopUpShow(inp){
@@ -450,4 +465,12 @@ function setBlueScore() {
 
 function setRedScore() {
   $("#redScore").html(redScore)
+}
+
+function setGreenScore() {
+  $("#greenScore").html(greenScore)
+}
+
+function setVioletScore() {
+  $("#violetScore").html(violetScore)
 }
