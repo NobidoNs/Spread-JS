@@ -418,6 +418,24 @@ function recoloring(table, x_med_sq, y_med_sq) {
   }
 }
 
+function threeXthree() {
+  PopUpMapHide();
+}
+
+function sixXsix() {
+  PopUpMapHide();
+}
+
+function PopUpMapHide() {
+  $("#popupmp").hide();
+}
+
+
+
+// function fourPlayers() {
+//   // PopUpButtonHide()
+// }
+
 function twoPlayers() {
   PopUpButtonHide()
   plColors = ["red", "blue"]
