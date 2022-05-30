@@ -311,7 +311,7 @@ function BOOM(table, x_med_sq, y_med_sq) {
       table.all[n] = plColor
       recoloring(table, two_x_medium_sq, two_y_medium_sq)
     } else {
-      for (let p = 0; p <= plColor.length - 1; p++) {
+      for (let p = 0; p <= plColors.length - 1; p++) {
         if (z == plColors[p]) {
           table.colorJamp(two_x_medium_sq, two_y_medium_sq, plColor, table)
         }
@@ -471,6 +471,9 @@ function threeXthree() {
 
 function sixXsix() {
   PopUpMapHide();
+  table1 = new Table('myTable', 17, 17)
+  table1.generate()
+  first = $("td");
 }
 
 function PopUpMapHide() {
