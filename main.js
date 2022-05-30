@@ -1,12 +1,13 @@
 class Table {
   constructor (tableSelector, rowsSelector, columnsSelector) {
-    this.rows = 17
-    this.cols = 17
+    this.rows = rowsSelector+1
+    this.cols = columnsSelector+1
     this._a = 1
     this.all = []
     this.f = false
     this.rowsSelector = rowsSelector
     this.columnsSelector = columnsSelector
+    this.counter = 0
     // this.tableObj = document.querySelector(tableSelector)
     this.tableObj = $(`#${tableSelector}`)
 
@@ -36,12 +37,23 @@ class Table {
     return this._a
   }
 
+  getCols() {
+    return this.cols
+  }
+
+  getRows() {
+    // console.log(this.rows)
+    return this.rows
+  }
+
   // set a(w) {
   //   this._a = w
   // }
 
   init(tbl) {
     this._a = tbl.a
+    this.cols = tbl.getCols()
+    this.rows = tbl.getRows()
     this.all = [...tbl.all]
   }
 
@@ -50,26 +62,21 @@ class Table {
     // const rowsNumber = parseInt(document.querySelector(this.rowsSelector).value) + 1
     // const columnsNumber = parseInt(document.querySelector(this.columnsSelector).value) + 1
 
-    const rows = this.rows
-    const cols = this.cols
 
-    for (let i = 0; i <= rows; i++) {
+    for (let i = 0; i <= this.rowsSelector; i++) {
       let tr = '<tr>'
       let td = ''
-      for (let j = 0; j <= cols; j++) {
+      for (let j = 0; j <= this.columnsSelector; j++) { 
         const cell = (j % 3)+(i % 3)*3
         // const y = i % 3 + 1
         // const x = j % 3 + 1
         // const cell2 = `${x},${y}`
 
         if (cell == 4) {
-          this.all.push("yellow")
           td = `<td style="background-color: yellow;"></td>`;
-        } else if (i == 0 || j == 0 || i == rows || j == cols || cell % 2 == 0) {
-          this.all.push("black")
+        } else if (i == 0 || j == 0 || i == this.rowsSelector || j == this.columnsSelector || cell % 2 == 0) {
           td = `<td style="background-color: black;"></td>`;
         } else {
-          this.all.push("white")
           td = `<td onclick="tap(${j},${i})"></td>`;
         }
 
@@ -77,23 +84,24 @@ class Table {
 
         tr += td
       }
-
+    
       tr += '</tr>'
       tableHTML += tr
     }
+    this.all = this.prepare()
     this.tableObj.html(tableHTML)
   }
 
 
   whatIsColor = (x,y) => {
-    let n = y * (this.cols+1) + x
+    let n = y * this.cols + x
     let color = this.all[n]
     // console.log(this.all[n])
     return color
   }
 
   chColor = (x, y, color, table) => {
-    let n = y * (this.cols+1) + x
+    let n = y * this.cols + x
     if (n <= 324) {
       let el = first[n]; // todo: global letiable
       $(el).css('background-color', color);
@@ -107,27 +115,37 @@ class Table {
     let re = haveColor(this, x_med_sq, y_med_sq)
     let color = re[1]
     let fl = re[0]
+    let n = y * this.cols + x
     const table2 = this.clone()
-    if ((this.all[y * 18 + x] == "white" && fl == false) || (fl == true && color == plColor && this.all[y * 18 + x] == "white")) {
-      let n = y * (this.cols + 1) + x
+    if ((this.all[n] == "white" && fl == false) || (fl == true && color == plColor && this.all[n] == "white")) {
       // this.chColor(x, y, plColor, table2)
       table2.all[n] = plColor
       this.f = true
       // console.log("6")
-      for (let y = 0; y <= 20; y++) {
-        const fl = await check2(table2)
-        if (fl == false) {
-          this.draw(table2)
-          await pause(1000)
+
+      if (this.counter >= 1) {
+        for (let y = 0; y <= 20; y++) {
+          const fl2 = await check2(table2)
+          if (fl2 == true) {
+            this.draw(table2)
+            await pause(1000)
+          }
+          else {
+            break
+          }
         }
-        else {
-          break
+        const isEnd = gameEndCheck(table2)
+        if (isEnd == true) {
+          PopUpShow(COW, table2)
+          // table1.fullRestart(COW, table2)
+          return 
         }
       }
       this.draw(table2)
       this.init(table2)
       // console.log("5")
       this.chPlayer()
+      this.counter += 1
     }
   }
 
@@ -137,7 +155,7 @@ class Table {
       for (let x = 0; x <= 2; x++) {
         let x1 = x_med_sq*3 + x
         let y1 = y_med_sq*3 + y
-        let n = y1 * (this.cols + 1) + x1
+        let n = y1 * this.cols + x1
         if (this.all[n] == "white") {
           this.all[n] = plColor
           // this.chColor(x1, y1, plColor)
@@ -160,47 +178,64 @@ class Table {
       }
     }
   }
+
+
+
   draw = (table) => {
     // console.log(this.all.length)
     for (let n = 0; n < table.all.length - 1; n++) {
-      let y = Math.floor(n / (table.cols + 1))
-      let x = n - y*(table.cols + 1)
+      let y = Math.floor(n / this.cols)
+      let x = n - y*this.cols
+      // console.log(x, y)
       let cl = table.all[n]
       this.all[n] = cl
       this.chColor(x, y, cl, table)
       // console.log("x =", x, "y =", y)
     }
   }
-  fullRestart = async(colorOfWin, table) => {
-    one = true
-    await pause(3000)
+  prepare = () => {
+    const all = []
+    for (let i = 0; i <= this.rowsSelector; i++) {
+      for (let j = 0; j <= this.columnsSelector; j++) {
+        const cell = (j % 3)+(i % 3)*3
+
+        if (cell == 4) {
+          all.push("yellow")
+        } else if (i == 0 || j == 0 || i == this.rowsSelector || j == this.columnsSelector || cell % 2 == 0) {
+          all.push("black")
+        } else {
+          all.push("white")
+        }
+      }
+    }
+    return all 
+  }
+
+  fullRestart = async(table) => {
+    this.all = this.prepare()
+    table.all = this.prepare()
+    // console.log(this.all)
+    this.counter = 0
+    table.draw(table)
     redScore = 0
     blueScore = 0
     greenScore = 0
     violetScore = 0
-    for (let x = 0; x <= 17; x++) {
-      for (let y = 0; y <= 17; y++) {
-        for (let p = 0; p <= plColors.length - 1; p++) {
-          if (table.whatIsColor(x, y) == plColors[p]) {
-            n = y * (table.cols + 1) + x
-            table.all[n] = "white"
-            table.draw(table)
-          }
-        }
-      }
-    }
     setBlueScore()
     setRedScore()
-    PopUpShow(colorOfWin)
+    setGreenScore()
+    setVioletScore()
   }
+  // Class End
 }
 
-const table1 = new Table('myTable') //'.table', '.rows', '.columns'
+let table1 = null
 let plColors = []
 let plColor = "red"
-table1.generate()
+let rowses = null
+let colses = null
 
-let first = $("td");
+let first = [];
 let one = true
 let onReady = false
 let redScore = 0
@@ -224,7 +259,8 @@ function haveColor(table, x_med_sq, y_med_sq) {  // +
       let x_pos = x_med_sq*3 + x
       let y_pos = y_med_sq*3 + y
       for (let p = 0; p <= plColors.length - 1; p++) {
-        if (table.whatIsColor(x_pos, y_pos) == plColors[p]) {
+        let a = table.whatIsColor(x_pos, y_pos)
+        if (a == plColors[p]) {
           let color = table.whatIsColor(x_pos, y_pos)
           return [true, color]
         }
@@ -268,7 +304,7 @@ function BOOM(table, x_med_sq, y_med_sq) {
     let two_x_medium_sq = Math.floor(x1 / 3)
     let two_y_medium_sq = Math.floor(y1 / 3)
     let z = table.whatIsColor(x1, y1) 
-    let n = y1 * (table.cols + 1) + x1
+    let n = y1 * table.cols + x1
 
 
     if (z == "white") {
@@ -286,25 +322,27 @@ function BOOM(table, x_med_sq, y_med_sq) {
   console.log(redScore)
   setBlueScore()
   setRedScore()
-  gameEndCheck(table)
   one = false
 }
 
 // +
+// check and coll boom if need
 async function check2(table) {
-  let ret3 = true
   let zn_x = []
   let zn_y = []
   let ret = false
   let ret2 = false
-  for (let y = 0; y <= 5; y++) {
-    for (let x = 0; x <= 5; x++) {
+  let yRange = table.getCols() / 3 - 1
+  let xRange = table.getRows() / 3 - 1
+  for (let y = 0; y <= yRange; y++) {
+    for (let x = 0; x <= xRange; x++) {
       ret = onlyColorfull(table, x, y)
       if (ret == true) {
         zn_x.push(x)
         zn_y.push(y)
         ret2 = true
-        console.log(zn_x)
+        console.log(x, y)
+        // console.log(xRange)
       }
     }
   }
@@ -318,12 +356,12 @@ async function check2(table) {
       // console.log("2")
       // console.log(zn_x[a], zn_y[a])
     }
-    return new Promise((resolve) => resolve(false))
+    return new Promise((resolve) => resolve(true))
   }
   // if (ret2 == false) {
   //   return new Promise((resolve) => resolve(false))
   // }
-return new Promise((resolve) => resolve(true))
+return new Promise((resolve) => resolve(false))
 }
 
 // +
@@ -341,12 +379,21 @@ function gameEndCheck(table) {
   let BLoose = true
   let GLoose = true
   let VLoose = true
+  const rowses = table1.getRows()
+  const colses = table1.getCols()
+  if (plColors.length < 3) {
+    GLoose = false
+  }
+  if (plColors.length < 4) {
+    VLoose = false
+  }
   let rest = false
   let flags = [RLoose, BLoose, GLoose, VLoose]
-  for (let x = 0; x <= 17; x++) {
-    for (let y = 0; y <= 17; y++) {
+  for (let x = 0; x < rowses; x++) {
+    for (let y = 0; y < colses; y++) {
       for (let p = 0; p <= plColors.length - 1; p++) {
-        if (table.whatIsColor(x, y) == plColors[p]) {
+        cl = table.whatIsColor(x, y)
+        if (cl == plColors[p]) {
           flags[p] = false
         }
       }
@@ -362,13 +409,8 @@ function gameEndCheck(table) {
     rest = true
     COW = "red"
   }
-  if (rest == true) {
-    rest = false
-    // otv = restButton()
-    // if (otv == true) {
-    //   fullRestart()
-    table.fullRestart(COW, table)
-  }
+
+  return rest
 }
 
 
@@ -382,7 +424,7 @@ function clear_medium_sq(table, x_med_sq, y_med_sq) {
       let z = table.whatIsColor(x1, y1)
       for (let p = 0; p <= plColors.length - 1; p++) {
         if (z == plColors[p]) {
-          n = y1 * (table.cols + 1) + x1
+          n = y1 * table.cols + x1
           table.all[n] = "white"
           // table.chColor(x1, y1, "white")
         }
@@ -401,7 +443,7 @@ function recoloring(table, x_med_sq, y_med_sq) {
       a = table.whatIsColor(x1, y1)
       for (let p = 0; p <= plColors.length - 1; p++) {
         if (a == plColors[p]) {
-          n = y1 * (table.cols + 1) + x1
+          n = y1 * table.cols + x1
           table.all[n] = plColor
 
           if (plColor != plColors[p]) {
@@ -418,8 +460,13 @@ function recoloring(table, x_med_sq, y_med_sq) {
   }
 }
 
+
+
 function threeXthree() {
   PopUpMapHide();
+  table1 = new Table('myTable', 8, 8)
+  table1.generate()
+  first = $("td");
 }
 
 function sixXsix() {
@@ -461,10 +508,7 @@ function PopUpButtonHide(){
 
 function PopUpHide(){
   $("#popupst").hide();
-  blueScore = 0
-  redScore = 0
-  greenScore = 0
-  violetScore = 0
+  table1.fullRestart(table1)
 }
 
 function PopUpShow(inp){
