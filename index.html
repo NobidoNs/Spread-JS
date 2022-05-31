@@ -31,6 +31,7 @@
   </main>
 
   <table class="table" id="myTable" cellpadding="" cellspacing=""></table>
+  <table class="table" id="myDemoTable" cellpadding="" cellspacing=""></table>
 
   <script src="./main.js"></script>
   
@@ -39,14 +40,14 @@
     Sample Text
     <a href="javascript:PopUpShow()">Show popup</a>
   </div> -->
-  <div class="b-popup" id="popupst">
+  <div class="b-popup" id="popupst" hidden>
     <div class="b-popup-content">
       <a id="whoIsWin"> </a>
       <a class="button" href="javascript:PopUpHide()">Start</a>
     </div>
   </div>
 
-  <div class="b-popup" id="popuppl">
+  <div class="b-popup" id="popuppl" hidden>
     <div class="b-popup-content6">
       <a id="players"> </a>
       <a class="button" href="javascript:twoPlayers()">TwoPlayers</a>
@@ -60,32 +61,49 @@
       <a id="pole"> </a>
       <a class="button" href="javascript:threeXthree()">3X3</a>
       <a class="button" href="javascript:sixXsix()">6X6</a>
-      <a class="button" href="javascript:CeateMap()">CreateMap</a>
+      <a class="button" href="javascript:CreateMap()">CreateMap</a>
     </div>
   </div>
 
-  <div class="b-popup-content2">
+  <div class="b-popup-content2" hidden>
     <a>BlueScore</a> 
     <a id="blueScore"> </a> 
   </div>
 
-  <div class="b-popup-content3">
+  <div class="b-popup-content3" hidden>
     <div>
       <a>RedScore</a>
       <a id="redScore"> </a> 
     </div>
   </div>
 
-  <div class="b-popup-content4">
+  <div class="b-popup-content4" hidden>
     <a>GreenScore</a> 
     <a id="greenScore"> </a> 
   </div>
 
-  <div class="b-popup-content5">
+  <div class="b-popup-content5" hidden>
     <div>
       <a>VioletScore</a>
       <a id="violetScore"> </a> 
     </div>
+  </div>
+
+  <div class="b-popup-content8" id="popupdo" hidden>
+    <a id="don"> </a>
+    <a class="button" href="javascript:done()">Done</a>
+  </div>
+
+  <div class="b-popup-content8" id="popupge" hidden>
+    <a id="gen"> </a>
+    <a class="button" href="javascript:generate()">Generate</a>
+  </div>
+
+  <div class="b-popup-content9">
+    <form id="inp" hidden>
+      <input type="text" id="row" placeholder="row"></input>
+      <input type="text" id="col" placeholder="col"></input>
+    </form>
   </div>
 
 </body>

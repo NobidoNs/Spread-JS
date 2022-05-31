@@ -73,9 +73,9 @@ class Table {
         // const cell2 = `${x},${y}`
 
         if (cell == 4) {
-          td = `<td style="background-color: yellow;"></td>`;
+          td = `<td style="background-color: yellow; onclick="tap(${j},${i})""></td>`;
         } else if (i == 0 || j == 0 || i == this.rowsSelector || j == this.columnsSelector || cell % 2 == 0) {
-          td = `<td style="background-color: black;"></td>`;
+          td = `<td style="background-color: black;" onclick="tap(${j},${i})"></td>`;
         } else {
           td = `<td onclick="tap(${j},${i})"></td>`;
         }
@@ -92,6 +92,30 @@ class Table {
     this.tableObj.html(tableHTML)
   }
 
+  createFromAll = () => {
+    let tableHTML = ''
+
+
+    for (let i = 0; i <= this.rowsSelector; i++) {
+      let tr = '<tr>'
+      let td = ''
+      for (let j = 0; j <= this.columnsSelector; j++) { 
+        const cell = i * this.cols + j
+        const color = this.all[cell]
+        if (color == "yellow" || color == "black") {
+          td = `<td style='background-color: ${color}; onclick="tap(${j},${i})"'></td>`;
+        } else {
+          td = `<td onclick="tap(${j},${i})"></td>`;
+        }
+
+        tr += td
+      }
+    
+      tr += '</tr>'
+      tableHTML += tr
+    }
+    this.tableObj.html(tableHTML)
+  }
 
   whatIsColor = (x,y) => {
     let n = y * this.cols + x
@@ -211,12 +235,16 @@ class Table {
     return all 
   }
 
+
+
   fullRestart = async(table) => {
-    this.all = this.prepare()
-    table.all = this.prepare()
-    // console.log(this.all)
+    this.all = standartAll
+    table.all = standartAll
+    console.log(standartAll)
     this.counter = 0
-    table.draw(table)
+    this.createFromAll()
+    // table.draw(table)
+    first = $("td")
     redScore = 0
     blueScore = 0
     greenScore = 0
@@ -227,6 +255,91 @@ class Table {
     setVioletScore()
   }
   // Class End
+}
+
+class DemoMap {
+  constructor (tableSelector, rowsSelector, columnsSelector) {
+    this.rows = parseInt(rowsSelector)+1
+    this.cols = parseInt(columnsSelector)+1
+    this.rowsSelector = rowsSelector
+    this.columnsSelector = columnsSelector
+    this.all = []
+    this.tableObj = $(`#${tableSelector}`)
+  }
+  mapGenerate = () => {
+    let tableHTML = ''
+
+    for (let i = 0; i <= this.rowsSelector; i++) {
+      let tr = '<tr>'
+      let td = ''
+      for (let j = 0; j <= this.columnsSelector; j++) { 
+        const cell = (j % 3)+(i % 3)*3
+
+        if (cell == 4) {
+          td = `<td style="background-color: yellow;" onclick="tap(${j},${i})"></td>`;
+        } else if (i == 0 || j == 0 || i == this.rowsSelector || j == this.columnsSelector || cell % 2 == 0) {
+          td = `<td style="background-color: black;" onclick="tap(${j},${i})"></td>`;
+        } else {
+          td = `<td onclick="tap(${j},${i})"></td>`;
+        }
+
+        tr += td
+      }
+    
+      tr += '</tr>'
+      tableHTML += tr
+    }
+    this.all = this.prepare()
+    this.tableObj.html(tableHTML)
+  }
+
+  tapOnDemoTable = async(x, y) => {
+    let x_med_sq = Math.floor(x / 3)
+    let y_med_sq = Math.floor(y / 3)
+    this.fillBlack(x_med_sq, y_med_sq)
+  }
+
+  fillBlack = (x1, y1) => {
+    for (let y = 0; y <= 4; y++) {
+      for (let x = 0; x <= 4; x++) {
+        let x_pos = (x1*3-1) + x
+        let y_pos = (y1*3-1) + y
+        this.chColor(x_pos, y_pos, "black")
+      }
+    }
+  }
+
+  getAll = () => {
+    let r = this.all
+    return r
+  }
+
+  chColor = (x, y, color) => {
+    let n = y * this.cols + x
+    if (n <= 324) {
+      let el = first[n]; // todo: global letiable
+      $(el).css('background-color', color);
+      this.all[n] = color
+    }
+  }
+
+  prepare = () => {
+    const all = []
+    for (let i = 0; i <= this.rowsSelector; i++) {
+      for (let j = 0; j <= this.columnsSelector; j++) {
+        const cell = (j % 3)+(i % 3)*3
+
+        if (cell == 4) {
+          all.push("yellow")
+        } else if (i == 0 || j == 0 || i == this.rowsSelector || j == this.columnsSelector || cell % 2 == 0) {
+          all.push("black")
+        } else {
+          all.push("white")
+        }
+      }
+    }
+    return all 
+  }
 }
 
 let table1 = null
@@ -242,6 +355,8 @@ let redScore = 0
 let blueScore = 0
 let greenScore = 0
 let violetScore = 0
+let demo = false
+let standartAll = null
 
 async function tap(row,col) {
   const x = row;
@@ -249,8 +364,13 @@ async function tap(row,col) {
   if (onReady) return
   console.log('taped', x, y)
   onReady = true
-  await table1.tapOnTable(x, y)
-  onReady = false
+  if (demo == true) {
+    demoTable.tapOnDemoTable(x, y)
+    onReady = false
+  } else {
+    await table1.tapOnTable(x, y)
+    onReady = false
+  }
 }
 
 function haveColor(table, x_med_sq, y_med_sq) {  // +
@@ -276,6 +396,7 @@ function onlyColorfull(table, x_medium_sq, y_medium_sq) {  // +
   let ret = true
   const x_sq = x_medium_sq + 1
   const y_sq = y_medium_sq + 1
+  let black = 0
   for (let y = 0; y <= 2; y++) {
     for (let x = 0; x <= 2; x++) {
       // x_pos = 3 * x_sq - x - 1
@@ -283,6 +404,12 @@ function onlyColorfull(table, x_medium_sq, y_medium_sq) {  // +
       x_pos = (x_sq-1) * 3 + x
       y_pos = (y_sq-1) * 3 + y
       if (table.whatIsColor(x_pos,y_pos) == "white") {
+        ret = false
+      }
+      if (table.whatIsColor(x_pos,y_pos) == "black") {
+        black += 1
+      }
+      if (black == 9) {
         ret = false
       }
     }
@@ -460,6 +587,24 @@ function recoloring(table, x_med_sq, y_med_sq) {
   }
 }
 
+// $().ready(function () {
+//   $("#popuppl").hide();
+//   $("#popupst").hide();
+// })
+
+function done() {
+  doneHiden()
+  const r = parseInt(getRow())
+  const c = parseInt(getCols())
+  demo = false
+  table1 = new Table('myTable', r, c)
+  table1.all = [...demoTable.all]
+  standartAll = [...demoTable.all]
+  table1.createFromAll()
+  const tableObj = $(`#myDemoTable`)
+  tableObj.html("<div hidden></div>")
+  first = $("td")
+}
 
 
 function threeXthree() {
@@ -467,6 +612,8 @@ function threeXthree() {
   table1 = new Table('myTable', 8, 8)
   table1.generate()
   first = $("td");
+  PopUpPlayersShow()
+  standartAll = [...table1.all]
 }
 
 function sixXsix() {
@@ -474,29 +621,65 @@ function sixXsix() {
   table1 = new Table('myTable', 17, 17)
   table1.generate()
   first = $("td");
+  PopUpPlayersShow()
+  standartAll = [...table1.all]
+}
+
+function StartCreate(r, c) {
+  demoTable = new DemoMap('myDemoTable', r, c)
+  demoTable.mapGenerate()
+  demo = true
+  first = $("td")
+}
+
+function CreateMap() {
+  PopUpMapHide();
+  $("#popupge").show()
+  $("#inp").show()
 }
 
 function PopUpMapHide() {
   $("#popupmp").hide();
 }
 
+function generate() {
+  doneShow()
+  $("#popupge").hide()
+  $("#inp").hide()
+  const c = getCols()
+  const r = getRow()
+  StartCreate(r, c)
+}
 
+function doneHiden() {
+  $("#popupdo").hide();
+  PopUpPlayersShow()
+}
 
-// function fourPlayers() {
-//   // PopUpButtonHide()
-// }
+function doneShow() {
+  $("#popupdo").show();
+}
 
 function twoPlayers() {
   PopUpButtonHide()
+  setRedScore()
+  setBlueScore()
   plColors = ["red", "blue"]
 }
 
 function threePlayers() {
+  setRedScore()
+  setBlueScore()
+  setGreenScore()
   PopUpButtonHide()
   plColors = ["red", "blue", "green"]
 }
 
 function fourPlayers() {
+  setRedScore()
+  setBlueScore()
+  setGreenScore()
+  setVioletScore()
   PopUpButtonHide()
   plColors = ["red", "blue", "green", "violet"]
 }
@@ -511,7 +694,9 @@ function PopUpButtonHide(){
 
 function PopUpHide(){
   $("#popupst").hide();
-  table1.fullRestart(table1)
+  if (demo == false) {
+    table1.fullRestart(table1)
+  }
 }
 
 function PopUpShow(inp){
@@ -526,16 +711,29 @@ function PopUpPlayersShow(){
 
 function setBlueScore() {
   $("#blueScore").html(blueScore)
+  $("#blueScore").show()
 }
 
 function setRedScore() {
   $("#redScore").html(redScore)
+  $("#redScore").show()
 }
 
 function setGreenScore() {
   $("#greenScore").html(greenScore)
+  $("#greenScore").show()
 }
 
 function setVioletScore() {
   $("#violetScore").html(violetScore)
+  $("#violetScore").show()
+}
+
+function getRow() {
+  let r = (document.getElementById('row').value) * 3 - 1
+  return r
+}
+
+function getCols() {
+  return (document.getElementById('col').value) * 3 - 1
 }
