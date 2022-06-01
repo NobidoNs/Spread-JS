@@ -147,24 +147,26 @@ class Table {
       this.f = true
       // console.log("6")
 
-      if (this.counter >= 1) {
-        for (let y = 0; y <= 20; y++) {
-          const fl2 = await check2(table2)
-          if (fl2 == true) {
-            this.draw(table2)
-            await pause(1000)
-          }
-          else {
-            break
-          }
+      for (let y = 0; y <= 20; y++) {
+        const fl2 = await check2(table2)
+        if (fl2 == true) {
+          this.draw(table2)
+          await pause(1000)
         }
+        else {
+          break
+        }
+      }
+
+      if (this.counter >= plColors.length) {
         const isEnd = gameEndCheck(table2)
         if (isEnd == true) {
-          PopUpShow(COW, table2)
+          PopUpWinShow(COW, table2)
           // table1.fullRestart(COW, table2)
           return 
         }
       }
+      console.log("3",standartAll)
       this.draw(table2)
       this.init(table2)
       // console.log("5")
@@ -212,7 +214,9 @@ class Table {
       let x = n - y*this.cols
       // console.log(x, y)
       let cl = table.all[n]
+      console.log("3.2",standartAll)
       this.all[n] = cl
+      console.log("3.3",standartAll)
       this.chColor(x, y, cl, table)
       // console.log("x =", x, "y =", y)
     }
@@ -238,8 +242,8 @@ class Table {
 
 
   fullRestart = async(table) => {
-    this.all = standartAll
-    table.all = standartAll
+    this.all = [...standartAll]
+    table.all = [...standartAll]
     console.log(standartAll)
     this.counter = 0
     this.createFromAll()
@@ -249,10 +253,7 @@ class Table {
     blueScore = 0
     greenScore = 0
     violetScore = 0
-    setBlueScore()
-    setRedScore()
-    setGreenScore()
-    setVioletScore()
+    showAllScores()
   }
   // Class End
 }
@@ -447,8 +448,7 @@ function BOOM(table, x_med_sq, y_med_sq) {
     loops += 1
   }
   console.log(redScore)
-  setBlueScore()
-  setRedScore()
+  showAllScores()
   one = false
 }
 
@@ -506,6 +506,8 @@ function gameEndCheck(table) {
   let BLoose = true
   let GLoose = true
   let VLoose = true
+  let looses = 0
+  const players = plColors.length
   const rowses = table1.getRows()
   const colses = table1.getCols()
   if (plColors.length < 3) {
@@ -519,22 +521,26 @@ function gameEndCheck(table) {
   for (let x = 0; x < rowses; x++) {
     for (let y = 0; y < colses; y++) {
       for (let p = 0; p <= plColors.length - 1; p++) {
-        cl = table.whatIsColor(x, y)
+        const cl = table.whatIsColor(x, y)
         if (cl == plColors[p]) {
           flags[p] = false
         }
       }
     }
   }
-  if (flags[0] == true) {
-    console.log("Blue win")
-    COW = "blue"  // Color Of Win
-    rest = true
-  } 
-  if (flags[1] == true) {
-    console.log("Red win")
-    rest = true
-    COW = "red"
+
+  for (let i = 0; i <= 4; i++) {
+    console.log(flags[i])
+    if (flags[i] == true) {
+      looses += 1
+      plColors.splice(i, 1)
+      console.log(plColors)
+    } 
+    if (players-1 == looses) {
+      console.log(plColors[0],"win")
+      COW = plColors[0]  // Color Of Win
+      rest = true
+    }
   }
 
   return rest
@@ -643,7 +649,7 @@ function PopUpMapHide() {
 }
 
 function generate() {
-  doneShow()
+  $("#popupdo").show();
   $("#popupge").hide()
   $("#inp").hide()
   const c = getCols()
@@ -656,77 +662,33 @@ function doneHiden() {
   PopUpPlayersShow()
 }
 
-function doneShow() {
-  $("#popupdo").show();
-}
-
 function twoPlayers() {
-  PopUpButtonHide()
-  setRedScore()
-  setBlueScore()
+  showAllScores()
+  PopUpPlayersHide()
+  popUpStartShow()
   plColors = ["red", "blue"]
 }
 
 function threePlayers() {
-  setRedScore()
-  setBlueScore()
-  setGreenScore()
-  PopUpButtonHide()
+  showAllScores()
+  PopUpPlayersHide()
+  popUpStartShow()
   plColors = ["red", "blue", "green"]
 }
 
 function fourPlayers() {
-  setRedScore()
-  setBlueScore()
-  setGreenScore()
-  setVioletScore()
-  PopUpButtonHide()
+  showAllScores()
+  PopUpPlayersHide()
+  popUpStartShow()
   plColors = ["red", "blue", "green", "violet"]
 }
 
-function PopUpButtonHide(){
-  $("#popuppl").hide();
-  blueScore = 0
-  redScore = 0
-  greenScore = 0
-  violetScore = 0
+function popUpStartHide() {
+  $("#popupst").hide()
 }
 
-function PopUpHide(){
-  $("#popupst").hide();
-  if (demo == false) {
-    table1.fullRestart(table1)
-  }
-}
-
-function PopUpShow(inp){
-  out = inp + " Win"
-  $("#popupst").show();
-  $("#whoIsWin").html(out)
-}
-
-function PopUpPlayersShow(){
-  $("#popuppl").show();
-}
-
-function setBlueScore() {
-  $("#blueScore").html(blueScore)
-  $("#blueScore").show()
-}
-
-function setRedScore() {
-  $("#redScore").html(redScore)
-  $("#redScore").show()
-}
-
-function setGreenScore() {
-  $("#greenScore").html(greenScore)
-  $("#greenScore").show()
-}
-
-function setVioletScore() {
-  $("#violetScore").html(violetScore)
-  $("#violetScore").show()
+function popUpStartShow() {
+  $("#popupst").show()
 }
 
 function getRow() {
@@ -736,4 +698,36 @@ function getRow() {
 
 function getCols() {
   return (document.getElementById('col').value) * 3 - 1
+}
+
+// All Shows and Hides
+
+function PopUpWinShow(inp){
+  out = inp + " Win"
+  popUpStartShow()
+  $("#whoIsWin").html(out)
+}
+
+function showAllScores() {
+  const plScores = ["blueScore", "redScore", "greenScore", "violetScore"]
+  for (let i = 0; i>= 4; i++) {
+    $(`#${plScores[i]}`).show()
+    $(`#${plScores[i]}`).html(plColors[i])
+  }
+}
+
+function PopUpScoreHide(){
+  popUpStartHide()
+  if (demo == false) {
+    table1.fullRestart(table1)
+  }
+  $("#popupsc").show();
+}
+
+function PopUpPlayersShow(){
+  $("#popuppl").show();
+}
+
+function PopUpPlayersHide(){
+  $("#popuppl").hide();
 }
