@@ -123,11 +123,9 @@ class Table {
 
   chColor = (x, y, color, table) => {
     let n = y * this.cols + x
-    if (n <= 324) {
-      let el = first[n]; // todo: global letiable
-      $(el).css('background-color', color);
-      table1.all[n] = color
-    }
+    let el = first[n]; // todo: global letiable
+    $(el).css('background-color', color);
+    table1.all[n] = color
   }
 
   tapOnTable = async(x, y) => {
@@ -306,11 +304,9 @@ class DemoMap {
 
   chColor = (x, y, color) => {
     let n = y * this.cols + x
-    if (n <= 324) {
-      let el = first[n]; // todo: global letiable
-      $(el).css('background-color', color);
-      this.all[n] = color
-    }
+    let el = first[n]; // todo: global letiable
+    $(el).css('background-color', color);
+    this.all[n] = color
   }
 
   prepare = () => {
@@ -329,6 +325,41 @@ class DemoMap {
       }
     }
     return all 
+  }
+
+  cosmetyc = () => {
+    for (let x = 0; x <= this.rows; x++) {
+      for (let y = 0; y <= this.cols; y++) {
+        let cl = this.whatIsColor(x, y)
+        if (cl == "yellow") {
+          const pos = [x, y-1, x, y+1, x-1, y, x+1, y]
+          let colors = []
+          let rec = 0
+          let br = false
+          let bl = 0
+          for (let p = 0; p <= pos.length / 2 - 1; p++) {
+            colors.push(this.whatIsColor(pos[p], pos[p+1]))
+          }
+          for (let p = 0; p <= pos.length - 1; p++) {
+            if (colors[p] == "black") {
+              bl += 1
+            }
+            if (bl == 4) {
+              br = true
+            }
+          }
+          if (br == true) {
+            this.chColor(x, y, "black")
+          }
+        }
+      }
+    }
+  }
+
+  whatIsColor = (x,y) => {
+    let n = y * this.cols + x
+    let color = this.all[n]
+    return color
   }
 }
 
@@ -604,6 +635,7 @@ function recoloring(table, x_med_sq, y_med_sq) {
 
 function done() {
   doneHiden()
+  demoTable.cosmetyc()
   const r = parseInt(getRow())
   const c = parseInt(getCols())
   demo = false
@@ -653,11 +685,12 @@ function PopUpMapHide() {
 }
 
 function generate() {
+  const c = getCols()
+  const r = getRow()
+  if (r <= 0 || c <= 0 || (r == 1 || c < 3)) return null
   $("#popupdo").show();
   $("#popupge").hide()
   $("#inp").hide()
-  const c = getCols()
-  const r = getRow()
   StartCreate(r, c)
 }
 
@@ -679,6 +712,7 @@ function players(inp) {
   showAllScores()
   PopUpPlayersHide()
   const plCl = ["red", "blue", "green", "violet"]
+  plColors = []
   for (let i = 0; i <= inp; i++) {
     plColors.push(plCl[i])
     console.log(plColors)
