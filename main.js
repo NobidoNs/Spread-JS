@@ -131,7 +131,10 @@ class Table {
       }
 
       if (this.counter >= 1) {
-        const isEnd = gameEndCheck(table2)
+        let isEnd = false
+        if (blueScore+redScore+greenScore+violetScore != 0) {
+          isEnd = gameEndCheck(table2)
+        }
         if (isEnd == true) {
           PopUpWinShow(COW, table2)
           return 
@@ -473,31 +476,9 @@ pause = async(time) => {
   })
 }
 
-function kick(table) {
-  let colors = []
-  // rows = table.getRows
-  // cols = table.getCols
-  for (let x = 0; x < table.getRows(); x++) {
-    for (let y = 0; y < table.getCols(); y++) {
-      for (let n = 0; n < plColors.length; n++) {
-        cl = table.whatIsColor(x, y)
-        if (cl == plColors[n]) {
-          if (colors.includes(cl) == false) {
-            colors.push(cl)
-          }
-        }
-      }
-    }
-  }
-
-  for (let i = 0; i < plColors.length-1; i++) {
-    if (colors.includes(plColors[i]) == false) {
-      plColors.splice(i, 1)
-    }
-  }
-
-  // const clean = plColors.filter((item) => (!colors.includes(item))
-
+function kick(table, colors) {
+  const clean = plColors.filter((item) => (colors.includes(item)))
+  plColors = clean
 }
 
 function gameEndCheck(table) {
@@ -514,7 +495,7 @@ function gameEndCheck(table) {
       }
     }
   }
-  kick(table)
+  kick(table, colors)
   if (colors.length == 1) {
     return true
   } else {
