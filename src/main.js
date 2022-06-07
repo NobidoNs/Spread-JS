@@ -16,7 +16,7 @@ let demo = false
 let standartAll = null
 let demoTable = null
 
-const tap = async (row,col) => {
+async function tap(row,col) {
   const x = row;
   const y = col;
   if (onReady) return
@@ -47,7 +47,7 @@ function done() {
 }
 
 
-function threeXthree() {
+window.threeXthree = function () {
   PopUpMapHide();
   table1 = new Table('myTable', 8, 8)
   table1.generate()
