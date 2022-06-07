@@ -1,4 +1,8 @@
 // Test import of styles
+// https://stackoverflow.com/questions/53558916/babel-7-referenceerror-regeneratorruntime-is-not-defined
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+
 import '@/styles/index.scss'
 import $ from "jquery"
 import Table from "./js/Table"
