@@ -9,7 +9,7 @@ import Table from "./js/Table"
 import DemoMap from "./js/DemoMap"
 import {scores} from "./js/const"
 import {plColor} from "./js/const"
-import graph from "./js/graph"
+import * as graph from "./js/graph"
 import utils from "./js/utils"
 
 let table1 = null
