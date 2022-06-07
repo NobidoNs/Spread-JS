@@ -31,7 +31,7 @@ async function tap(row,col) {
   }
 }
 
-function done() {
+window.done = function() {
   doneHiden()
   demoTable.cosmetyc()
   const r = parseInt(getRow())
@@ -56,7 +56,7 @@ window.threeXthree = function () {
   standartAll = [...table1.all]
 }
 
-function sixXsix() {
+window.sixXsix = function() {
   PopUpMapHide();
   table1 = new Table('myTable', 17, 17)
   table1.generate()
@@ -72,7 +72,7 @@ function StartCreate(r, c) {
   first = $("td")
 }
 
-function CreateMap() {
+window.CreateMap = function() {
   PopUpMapHide();
   $("#popupge").show()
   $("#inp").show()
@@ -97,13 +97,13 @@ function doneHiden() {
   graph.PopUpPlayersShow()
 }
 
-function twoPlayers() {
+window.twoPlayers = function() {
   players(1)
 }
-function threePlayers() {
+window.threePlayers = function() {
   players(2)
 }
-function fourPlayers() {
+window.fourPlayers = function() {
   players(3)
 }
 function players(inp) {
