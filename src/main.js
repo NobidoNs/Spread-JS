@@ -3,7 +3,10 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
-import '@/styles/index.scss'
+// import '@/styles/index.scss'
+import '@/styles/style.css'
+import '@/styles/styles.css'
+
 import $ from "jquery"
 import Table from "./js/Table"
 import DemoMap from "./js/DemoMap"
