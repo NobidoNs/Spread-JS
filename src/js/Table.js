@@ -1,5 +1,5 @@
 import $ from "jquery"
-import {scores} from "const"
+import {scores} from "./const"
 import graph from "./graph"
 import utils, { checker } from "./utils"
 

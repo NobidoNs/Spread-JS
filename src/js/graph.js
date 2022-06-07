@@ -1,5 +1,5 @@
 import $ from "jquery"
-import {scores} from "const"
+import {scores} from "./const"
 // All Shows and Hides
 export const chColor = (x, y, color, table) => {
   const first = $("td");
