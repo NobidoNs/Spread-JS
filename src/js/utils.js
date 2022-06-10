@@ -1,4 +1,5 @@
-import graph from "./graph"
+import * as graph from "./graph"
+import $ from "jquery"
 import consts, { plColor } from "./const"
 
 export function haveColor(table, x_med_sq, y_med_sq, plColors) {  
@@ -7,9 +8,9 @@ export function haveColor(table, x_med_sq, y_med_sq, plColors) {
       let x_pos = x_med_sq*3 + x
       let y_pos = y_med_sq*3 + y
       for (let p = 0; p <= plColors.length - 1; p++) {
-        let a = table.whatIsColor(x_pos, y_pos)
+        let a = whatIsColor(table, x_pos, y_pos)
         if (a == plColors[p]) {
-          let color = table.whatIsColor(x_pos, y_pos)
+          let color = whatIsColor(table, x_pos, y_pos)
           return [true, color]
         }
       }
@@ -25,6 +26,12 @@ export async function pause(time) {
   })
 }
 
+export function whatIsColor(table, x, y) {
+  let n = y * table.cols + x
+  let color = table.all[n]
+  return color
+}
+
 function onlyColorfull(table, x_medium_sq, y_medium_sq) {  
   let ret = true
   const x_sq = x_medium_sq + 1
@@ -34,10 +41,10 @@ function onlyColorfull(table, x_medium_sq, y_medium_sq) {
     for (let x = 0; x <= 2; x++) {
       const x_pos = (x_sq-1) * 3 + x
       const y_pos = (y_sq-1) * 3 + y
-      if (table.whatIsColor(x_pos,y_pos) == "white") {
+      if (whatIsColor(table, x_pos,y_pos) == "white") {
         ret = false
       }
-      if (table.whatIsColor(x_pos,y_pos) == "black") {
+      if (whatIsColor(table, x_pos,y_pos) == "black") {
         black += 1
       }
       if (black == 9) {
@@ -67,15 +74,15 @@ export function check(table) {
   return ret2
 }
 
-export function tapCheck(plColors, plColor, x, y) {
+export function tapCheck(table, plColors, plColor, x, y) {
   let x_med_sq = Math.floor(x / 3)
   let y_med_sq = Math.floor(y / 3)
-  let re = haveColor(this, x_med_sq, y_med_sq, plColors)
+  let re = haveColor(table, x_med_sq, y_med_sq, plColors)
   let color = re[1]
   let fl = re[0]
-  let n = y * this.cols + x
-  if ((this.all[n] == "white" && fl == false) || 
-  (fl == true && color == plColor && this.all[n] == "white")) {
+  let n = y * table.cols + x
+  if ((table.all[n] == "white" && fl == false) || 
+  (fl == true && color == plColor && table.all[n] == "white")) {
     return true
   } else {
     return false

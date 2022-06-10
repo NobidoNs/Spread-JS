@@ -1,7 +1,7 @@
 import $ from "jquery"
-import {scores} from "./const"
-import graph from "./graph"
-import utils, { checker } from "./utils"
+import * as consts from "./const"
+import * as graph from "./graph"
+import * as utils from "./utils"
 
 class Table {
   constructor (tableSelector, rowsSelector, columnsSelector) {
@@ -13,6 +13,7 @@ class Table {
     this.rowsSelector = rowsSelector
     this.columnsSelector = columnsSelector
     this.counter = 0
+
 
     this.tableObj = $(`#${tableSelector}`)
 
@@ -95,22 +96,16 @@ class Table {
     this.tableObj.html(tableHTML)
   }
 
-  whatIsColor = (x,y) => {
-    let n = y * this.cols + x
-    let color = this.all[n]
-    return color
-  }
-
   tapOnTable = async(x, y, plColors, plColor) => {
     let n = y * this.cols + x
     const table2 = this.clone()
-    if (utils.tapCeck(plColors, plColor, x, y)) {
+    if (utils.tapCheck(this, plColors, plColor, x, y)) {
       table2.all[n] = plColor
       this.f = true
-      utils.checker(table2, plColors, plColor)
+      await utils.checker(table2, plColors, plColor)
 
       if (this.counter >= 1) {
-        let {blueScore, redScore, greenScore, violetScore} = scores
+        let {blueScore, redScore, greenScore, violetScore} = consts.scores
         let isEnd = false
         if (blueScore+redScore+greenScore+violetScore != 0) {
           isEnd = utils.gameEndCheck(table2, plColors)
@@ -120,7 +115,7 @@ class Table {
           return 
         }
       }
-      this.draw(table2)
+      graph.draw(this, table2)
       this.init(table2)
       this.chPlayer(plColors, plColor)
       this.counter += 1
@@ -144,6 +139,7 @@ class Table {
 
   chPlayer = (plColors, plColor) => {
     if (this.f == true) {
+      debugger
       for (let i = 0; i <= plColors.length - 1; i++) {
         if (plColor == plColors[i]) {
           if (i == plColors.length - 1) {
@@ -182,10 +178,10 @@ class Table {
     this.counter = 0
     this.createFromAll()
     let first = $("td")
-    scores.redScore = 0
-    scores.blueScore = 0
-    scores.greenScore = 0
-    scores.violetScore = 0
+    consts.scores.redScore = 0
+    consts.scores.blueScore = 0
+    consts.scores.greenScore = 0
+    consts.scores.violetScore = 0
     graph.showAllScores()
     graph.PopUpPlayersShow()
   }

@@ -10,10 +10,10 @@ import '@/styles/styles.css'
 import $ from "jquery"
 import Table from "./js/Table"
 import DemoMap from "./js/DemoMap"
-import {scores} from "./js/const"
-import {plColor} from "./js/const"
+import * as consts from "./js/const"
 import * as graph from "./js/graph"
 import utils from "./js/utils"
+import {global} from "./js/Global"
 
 let table1 = null
 let plColors = []
@@ -23,7 +23,7 @@ let demo = false
 let standartAll = null
 let demoTable = null
 
-async function tap(row,col) {
+window.tap = async function(row,col) {
   const x = row;
   const y = col;
   if (onReady) return
@@ -33,7 +33,7 @@ async function tap(row,col) {
     demoTable.tapOnDemoTable(x, y)
     onReady = false
   } else {
-    await table1.tapOnTable(x, y, plColors, plColor)
+    await table1.tapOnTable(x, y)
     onReady = false
   }
 }
@@ -117,10 +117,9 @@ function players(inp) {
   graph.showAllScores()
   graph.PopUpPlayersHide()
   const plCl = ["red", "blue", "green", "violet"]
-  plColors = []
+  global.plColors = []
   for (let i = 0; i <= inp; i++) {
-    plColors.push(plCl[i])
-    console.log(plColors)
+    global.plColors.push(plCl[i])
   }
 }
 

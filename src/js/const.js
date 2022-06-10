@@ -1,5 +1,6 @@
 //
 export const plColor = "red";
+export let plColors = []
 export const scores = {
     blueScore:0,
     redScore:0, 
