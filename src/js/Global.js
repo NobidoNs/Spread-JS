@@ -1,1 +1,5 @@
-export const global = {plColor:"red", plColors:[], standartAll:null}
+export const global = {
+plColor:"red",
+plColors:[],
+standartAll:null
+}

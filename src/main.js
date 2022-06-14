@@ -10,17 +10,15 @@ import '@/styles/styles.css'
 import $ from "jquery"
 import Table from "./js/Table"
 import DemoMap from "./js/DemoMap"
-import * as consts from "./js/const"
+// import * as consts from "./js/const"
 import * as graph from "./js/graph"
 import utils from "./js/utils"
 import {global} from "./js/Global"
 
 let table1 = null
-let plColors = []
 let first = [];
 let onReady = false
 let demo = false
-let standartAll = null
 let demoTable = null
 
 window.tap = async function(row,col) {
@@ -46,7 +44,7 @@ window.done = function() {
   demo = false
   table1 = new Table('myTable', r, c)
   table1.all = [...demoTable.all]
-  standartAll = [...demoTable.all]
+  global.standartAll = [...demoTable.all]
   table1.createFromAll()
   const tableObj = $(`#myDemoTable`)
   tableObj.html("<div hidden></div>")
@@ -60,7 +58,7 @@ window.threeXthree = function () {
   table1.generate()
   first = $("td");
   graph.PopUpPlayersShow()
-  standartAll = [...table1.all]
+  global.standartAll = [...table1.all]
 }
 
 window.sixXsix = function() {
@@ -69,7 +67,7 @@ window.sixXsix = function() {
   table1.generate()
   first = $("td");
   graph.PopUpPlayersShow()
-  standartAll = [...table1.all]
+  global.standartAll = [...table1.all]
 }
 
 function StartCreate(r, c) {

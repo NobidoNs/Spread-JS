@@ -2,6 +2,7 @@ import $ from "jquery"
 import * as consts from "./const"
 import * as graph from "./graph"
 import * as utils from "./utils"
+import {global} from "./Global"
 
 class Table {
   constructor (tableSelector, rowsSelector, columnsSelector) {
@@ -96,19 +97,19 @@ class Table {
     this.tableObj.html(tableHTML)
   }
 
-  tapOnTable = async(x, y, plColors, plColor) => {
+  tapOnTable = async(x, y) => {
     let n = y * this.cols + x
     const table2 = this.clone()
-    if (utils.tapCheck(this, plColors, plColor, x, y)) {
-      table2.all[n] = plColor
+    if (utils.tapCheck(this, x, y)) {
+      table2.all[n] = global.plColor
       this.f = true
-      await utils.checker(table2, plColors, plColor)
+      await utils.checker(table2)
 
       if (this.counter >= 1) {
         let {blueScore, redScore, greenScore, violetScore} = consts.scores
         let isEnd = false
         if (blueScore+redScore+greenScore+violetScore != 0) {
-          isEnd = utils.gameEndCheck(table2, plColors)
+          isEnd = utils.gameEndCheck(table2)
         }
         if (isEnd != false) {
           graph.PopUpWinShow(isEnd[1], table2)
@@ -117,12 +118,12 @@ class Table {
       }
       graph.draw(this, table2)
       this.init(table2)
-      this.chPlayer(plColors, plColor)
+      this.chPlayer()
       this.counter += 1
     }
   }
 
-  colorJamp = (x_med_sq, y_med_sq, plColor) => {
+  colorJamp = (x_med_sq, y_med_sq) => {
     utils.recoloring(this, x_med_sq, y_med_sq)
     for (let y = 0; y <= 2; y++) {
       for (let x = 0; x <= 2; x++) {
@@ -130,23 +131,22 @@ class Table {
         let y1 = y_med_sq*3 + y
         let n = y1 * this.cols + x1
         if (this.all[n] == "white") {
-          this.all[n] = plColor
+          this.all[n] = global.plColor
           return null
         }
       }
     }
   }
 
-  chPlayer = (plColors, plColor) => {
+  chPlayer = () => {
     if (this.f == true) {
-      debugger
-      for (let i = 0; i <= plColors.length - 1; i++) {
-        if (plColor == plColors[i]) {
-          if (i == plColors.length - 1) {
-            plColor = plColors[0]
+      for (let i = 0; i <= global.plColors.length - 1; i++) {
+        if (global.plColor == global.plColors[i]) {
+          if (i == global.plColors.length - 1) {
+            global.plColor = global.plColors[0]
           } else {
-            plColor = plColors[i+1]
-            return plColor
+            global.plColor = global.plColors[i+1]
+            return global.plColor
           }
         }
       }
@@ -173,8 +173,8 @@ class Table {
 
 
 
-  fullRestart = async(standartAll) => {
-    this.all = [...standartAll]
+  fullRestart = async() => {
+    this.all = [...global.standartAll]
     this.counter = 0
     this.createFromAll()
     let first = $("td")

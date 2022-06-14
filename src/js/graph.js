@@ -1,5 +1,7 @@
 import $ from "jquery"
 import {scores} from "./const"
+import {global} from "./Global"
+
 // All Shows and Hides
 export const chColor = (x, y, color, table) => {
   const first = $("td");
@@ -35,10 +37,10 @@ export function showAllScores() {
   }
 }
 
-export function PopUpStart(table, demo, standartAll){
+export function PopUpStart(table, demo){
   popUpStartHide()
   if (demo == false) {
-    table.fullRestart(standartAll)
+    table.fullRestart()
   }
   $("#popupsc").show();
 }
