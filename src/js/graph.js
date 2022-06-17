@@ -31,18 +31,10 @@ export function showAllScores() {
   const plScores = [blueScore, redScore, greenScore, violetScore]
   const plNames = ["blueScore", "redScore", "greenScore", "violetScore"]
   $("#popupsc").show()
-  for (let i = 0; i <= 4; i++) {
+  for (let i = 0; i <= plNames.length; i++) {
     const out = plNames[i] + " " + plScores[i]
     $(`#${plNames[i]}`).html(out)
   }
-}
-
-export function PopUpStart(table, demo){
-  popUpStartHide()
-  if (demo == false) {
-    table.fullRestart()
-  }
-  $("#popupsc").show();
 }
 
 export function PopUpPlayersShow(){

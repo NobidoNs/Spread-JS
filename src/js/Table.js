@@ -103,11 +103,12 @@ class Table {
     if (utils.tapCheck(this, x, y)) {
       table2.all[n] = global.plColor
       this.f = true
-      await utils.checker(table2)
+      await utils.checker(this, table2)
 
       if (this.counter >= 1) {
         let {blueScore, redScore, greenScore, violetScore} = consts.scores
         let isEnd = false
+        console.log(redScore)
         if (blueScore+redScore+greenScore+violetScore != 0) {
           isEnd = utils.gameEndCheck(table2)
         }

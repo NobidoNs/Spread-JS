@@ -14,6 +14,7 @@ import DemoMap from "./js/DemoMap"
 import * as graph from "./js/graph"
 import utils from "./js/utils"
 import {global} from "./js/Global"
+import { scores } from "./js/const";
 
 let table1 = null
 let first = [];
@@ -87,7 +88,7 @@ function PopUpMapHide() {
   $("#popupmp").hide();
 }
 
-function generate() {
+window.generate = function () {
   const c = getCols()
   const r = getRow()
   if (r <= 0 || c <= 0 || (r == 1 || c < 3)) return null
@@ -128,4 +129,12 @@ function getRow() {
 
 function getCols() {
   return (document.getElementById('col').value) * 3 - 1
+}
+
+window.PopUpStart = function (){
+  graph.popUpStartHide()
+  if (demo == false) {
+    table1.fullRestart()
+  }
+  $("#popupsc").show();
 }
