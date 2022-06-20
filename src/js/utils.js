@@ -163,8 +163,15 @@ function clear_medium_sq(table, x_med_sq, y_med_sq) {
 }
 
 export function recoloring(table, x_med_sq, y_med_sq) {
-  let {blueScore, redScore, greenScore, violetScore} = scores
-  let scoresColor = [blueScore, redScore, greenScore, violetScore]
+  let scoresColor = {
+  "blue":scores.blueScore, 
+  "red":scores.redScore, 
+  "green":scores.greenScore, 
+  "violet":scores.violetScore
+  }
+  const cl = ["blueScore", "redScore", "greenScore", "violetScore"]
+
+
   for (let y = 0; y <= 2; y++) {
     for (let x = 0; x <= 2; x++) {
       const x1 = (x_med_sq*3) + x
@@ -176,16 +183,17 @@ export function recoloring(table, x_med_sq, y_med_sq) {
           table.all[n] = global.plColor
 
           if (global.plColor != global.plColors[p]) {
-            scoresColor[p] += 1
-            scores.blueScore = scoresColor[0]
-            scores.redScore = scoresColor[1]
-            scores.greenScore = scoresColor[2]
-            scores.violetScore = scoresColor[3]
+            scoresColor[global.plColor] += 1
+            scores.blueScore = scoresColor.blue
+            scores.redScore = scoresColor.red
+            scores.greenScore = scoresColor.green
+            scores.violetScore = scoresColor.violet
           }
         }
       }
     }
   }
+  graph.showAllScores()
 }
 
 function kick(colors) {
