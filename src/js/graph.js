@@ -1,6 +1,5 @@
 import $ from "jquery"
 import {scores} from "./const"
-import {global} from "./Global"
 
 // All Shows and Hides
 export const chColor = (x, y, color, table) => {

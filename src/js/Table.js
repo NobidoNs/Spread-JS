@@ -18,7 +18,6 @@ class Table {
 
     this.tableObj = $(`#${tableSelector}`)
 
-    console.log(this.tableObj)
   }
 
   clone() {
@@ -108,7 +107,6 @@ class Table {
       if (this.counter >= 1) {
         let {blueScore, redScore, greenScore, violetScore} = consts.scores
         let isEnd = false
-        console.log(redScore)
         if (blueScore+redScore+greenScore+violetScore != 0) {
           isEnd = utils.gameEndCheck(table2)
         }
@@ -178,7 +176,6 @@ class Table {
     this.all = [...global.standartAll]
     this.counter = 0
     this.createFromAll()
-    let first = $("td")
     consts.scores.redScore = 0
     consts.scores.blueScore = 0
     consts.scores.greenScore = 0

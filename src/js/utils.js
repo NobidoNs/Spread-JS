@@ -1,6 +1,4 @@
 import * as graph from "./graph"
-import $ from "jquery"
-// import consts, { plColor } from "./const"
 import {global} from "./Global"
 import {scores} from "./const"
 
@@ -95,9 +93,7 @@ export function tapCheck(table, x, y) {
 export async function checker(table1, table2) {
   for (let y = 0; y <= 20; y++) {
     const fl2 = await check(table2)
-    console.log("1")
     if (fl2[0] == true) {
-      console.log("2")
       BOOMER(table2, fl2[1], fl2[2])
       graph.draw(table1, table2)
       await pause(1000)
@@ -111,7 +107,6 @@ export async function checker(table1, table2) {
 async function BOOMER(table, zn_x, zn_y) {
   const l = zn_x.length
   for (let a = 0; a <= l - 1; a++) {
-    console.log("3") 
     BOOM(table, zn_x[a], zn_y[a])
   }
 }

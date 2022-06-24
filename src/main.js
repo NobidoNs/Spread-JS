@@ -12,9 +12,7 @@ import Table from "./js/Table"
 import DemoMap from "./js/DemoMap"
 // import * as consts from "./js/const"
 import * as graph from "./js/graph"
-import utils from "./js/utils"
 import {global} from "./js/Global"
-import { scores } from "./js/const";
 
 let table1 = null
 let first = [];
@@ -26,7 +24,6 @@ window.tap = async function(row,col) {
   const x = row;
   const y = col;
   if (onReady) return
-  console.log('taped', x, y)
   onReady = true
   if (demo == true) {
     demoTable.tapOnDemoTable(x, y)
