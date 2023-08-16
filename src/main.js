@@ -29,9 +29,56 @@ window.tap = async function(row,col) {
     demoTable.tapOnDemoTable(x, y)
     onReady = false
   } else {
+    global.steps += 1
     await table1.tapOnTable(x, y)
     onReady = false
   }
+}
+
+window.threeXthree = function () {
+  graph.popUpStartHide()
+  graph.hideAllScores()
+  graph.PopUpPlayersShow()
+  graph.PopUpMapHide()
+  table1 = new Table('myTable', 8, 8)
+  table1.generate()
+  first = $("td");
+  graph.TbShow()
+  global.standartAll = [...table1.all]
+}
+
+window.sixXsix = function() {
+  graph.popUpStartHide()
+  graph.hideAllScores()
+  graph.PopUpPlayersShow()
+  graph.PopUpMapHide()
+  table1 = new Table('myTable', 17, 17)
+  table1.generate()
+  first = $("td");
+  graph.TbShow()
+  global.standartAll = [...table1.all]
+}
+
+window.CreateMap = function() {
+  graph.hideAll();
+  graph.genShow()
+}
+
+window.generate = function () {
+  const c = getCols()
+  const r = getRow()
+  if (r <= 0 || c <= 0 || (r == 1 || c < 3)) return null
+  $("#popupdo").show();
+  graph.genHide()
+  StartCreate(r, c)
+}
+
+function StartCreate(r, c) {
+  graph.DemoTbShow()
+  demoTable = new DemoMap('myDemoTable', r, c)
+  demoTable.mapGenerate()
+  demo = true
+  first = $("td")
 }
 
 window.done = function() {
@@ -47,57 +94,13 @@ window.done = function() {
   const tableObj = $(`#myDemoTable`)
   tableObj.html("<div hidden></div>")
   first = $("td")
-}
-
-
-window.threeXthree = function () {
-  PopUpMapHide();
-  table1 = new Table('myTable', 8, 8)
-  table1.generate()
-  first = $("td");
+  graph.TbShow()
   graph.PopUpPlayersShow()
-  global.standartAll = [...table1.all]
-}
-
-window.sixXsix = function() {
-  PopUpMapHide();
-  table1 = new Table('myTable', 17, 17)
-  table1.generate()
-  first = $("td");
-  graph.PopUpPlayersShow()
-  global.standartAll = [...table1.all]
-}
-
-function StartCreate(r, c) {
-  demoTable = new DemoMap('myDemoTable', r, c)
-  demoTable.mapGenerate()
-  demo = true
-  first = $("td")
-}
-
-window.CreateMap = function() {
-  PopUpMapHide();
-  $("#popupge").show()
-  $("#inp").show()
-}
-
-function PopUpMapHide() {
-  $("#popupmp").hide();
-}
-
-window.generate = function () {
-  const c = getCols()
-  const r = getRow()
-  if (r <= 0 || c <= 0 || (r == 1 || c < 3)) return null
-  $("#popupdo").show();
-  $("#popupge").hide()
-  $("#inp").hide()
-  StartCreate(r, c)
 }
 
 function doneHiden() {
   $("#popupdo").hide();
-  graph.PopUpPlayersShow()
+  // graph.PopUpPlayersShow()
 }
 
 window.twoPlayers = function() {
@@ -130,8 +133,15 @@ function getCols() {
 
 window.PopUpStart = function (){
   graph.popUpStartHide()
-  if (demo == false) {
-    table1.fullRestart()
-  }
-  $("#popupsc").show();
+  table1.fullRestart()
+  graph.PopUpPlayersShow()
+}
+
+window.selectMap = function (){
+  graph.PopUpPlayersHide()
+  graph.PopUpMapShow()
+  graph.TbHide()
+  table1.fullRestart()
+  table1.deleteTable()
+  // $("#popupsc").show();
 }

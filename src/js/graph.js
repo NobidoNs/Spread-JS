@@ -19,6 +19,16 @@ export function draw(table1, table2) {
   }
 }
 
+export function hideAll() {
+  this.hideAllScores()
+  this.PopUpMapHide()
+  this.PopUpPlayersHide()
+  this.popUpStartHide()
+  this.genHide()
+  this.TbHide()
+  this.DemoTbHide()
+}
+
 export function PopUpWinShow(inp){
   const out = inp + " Win"
   popUpStartShow()
@@ -35,7 +45,37 @@ export function showAllScores() {
     $(`#${plNames[i]}`).html(out)
   }
 }
+export function hideAllScores() {
+  $("#popupsc").hide()
+}
 
+
+export function DemoTbHide() {
+  $("#myDemoTable").hide();
+}
+export function DemoTbShow() {
+  $("#myDemoTable").show();
+}
+export function genHide() {
+  $("#popupge").hide();
+  $("#inp").hide();
+}
+export function genShow() {
+  $("#popupge").show();
+  $("#inp").show();
+}
+export function TbHide() {
+  $("#myTable").hide();
+}
+export function TbShow() {
+  $("#myTable").show();
+}
+export function PopUpMapHide() {
+  $("#popupmp").hide();
+}
+export function PopUpMapShow() {
+  $("#popupmp").show();
+}
 export function PopUpPlayersShow(){
   $("#popuppl").show();
 }

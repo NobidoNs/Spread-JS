@@ -72,6 +72,11 @@ class Table {
     this.tableObj.html(tableHTML)
   }
 
+  deleteTable = () => {
+    this.all = []
+    this.tableObj.html("")
+  }
+
   createFromAll = () => {
     let tableHTML = ''
 
@@ -180,8 +185,7 @@ class Table {
     consts.scores.blueScore = 0
     consts.scores.greenScore = 0
     consts.scores.violetScore = 0
-    graph.showAllScores()
-    graph.PopUpPlayersShow()
+    graph.hideAllScores()
   }
 
 }

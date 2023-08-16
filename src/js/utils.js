@@ -59,8 +59,8 @@ export function check(table) {
   let zn_x = []
   let zn_y = []
   let ret = false
-  let yRange = table.getCols() / 3 - 1
-  let xRange = table.getRows() / 3 - 1
+  let yRange = table.getRows() / 3 - 1
+  let xRange = table.getCols() / 3 - 1
   for (let y = 0; y <= yRange; y++) {
     for (let x = 0; x <= xRange; x++) {
       let r = onlyColorfull(table, x, y)
@@ -119,8 +119,11 @@ function BOOM(table, x_med_sq, y_med_sq) {
   clear_medium_sq(table, x_med_sq, y_med_sq)
   let loops = 0
   for (let i = 0; i <= 3; i++) {
-    let x1 = x_centr - x_to_activated[loops]
-    let y1 = y_centr - y_to_activated[loops]
+    let x1 = x_centr - x_to_activated[i]
+    let y1 = y_centr - y_to_activated[i]
+    if (x1 < 0 || y1 < 0) {
+      continue
+    } 
     let two_x_medium_sq = Math.floor(x1 / 3)
     let two_y_medium_sq = Math.floor(y1 / 3)
     let z = whatIsColor(table, x1, y1) 
@@ -136,9 +139,7 @@ function BOOM(table, x_med_sq, y_med_sq) {
         }
       }
     }
-    loops += 1
   }
-  graph.showAllScores()
 }
 
 function clear_medium_sq(table, x_med_sq, y_med_sq) {
@@ -165,7 +166,6 @@ export function recoloring(table, x_med_sq, y_med_sq) {
   "violet":scores.violetScore
   }
   const cl = ["blueScore", "redScore", "greenScore", "violetScore"]
-
 
   for (let y = 0; y <= 2; y++) {
     for (let x = 0; x <= 2; x++) {
@@ -197,15 +197,16 @@ function kick(colors) {
 }
 
 export function gameEndCheck(table) {
+  if (global.steps < global.plColors.length) {
+    return false
+  }
   let colors = []
-  for (let y = 0; y < table.getCols(); y++) {
-    for (let x = 0; x < table.getRows(); x++) {
-      for (let n = 0; n < global.plColors.length; n++) {
-        let cl = whatIsColor(table, x, y)
-        if (cl == global.plColors[n]) {
-          if (colors.includes(cl) == false) {
-            colors.push(cl)
-          }
+  for (let y = 0; y < table.getRows(); y++) {
+    for (let x = 0; x < table.getCols(); x++) {
+      let cl = whatIsColor(table, x, y)
+      if (global.plColors.includes(cl)) {
+        if (colors.includes(cl) == false) {
+          colors.push(cl)
         }
       }
     }
