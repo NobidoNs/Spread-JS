@@ -1,12 +1,12 @@
-import * as graph from "./graph"
-import {global} from "./Global"
-import {scores} from "./const"
+import * as graph from './graph'
+import { global } from './Global'
+import { scores, colorsCount } from './const'
 
-export function haveColor(table, x_med_sq, y_med_sq) {  
+export function haveColor(table, x_med_sq, y_med_sq) {
   for (let y = 0; y <= 2; y++) {
     for (let x = 0; x <= 2; x++) {
-      let x_pos = x_med_sq*3 + x
-      let y_pos = y_med_sq*3 + y
+      let x_pos = x_med_sq * 3 + x
+      let y_pos = y_med_sq * 3 + y
       for (let p = 0; p <= global.plColors.length - 1; p++) {
         let a = whatIsColor(table, x_pos, y_pos)
         if (a == global.plColors[p]) {
@@ -32,19 +32,19 @@ export function whatIsColor(table, x, y) {
   return color
 }
 
-function onlyColorfull(table, x_medium_sq, y_medium_sq) {  
+function onlyColorfull(table, x_medium_sq, y_medium_sq) {
   let ret = true
   const x_sq = x_medium_sq + 1
   const y_sq = y_medium_sq + 1
   let black = 0
   for (let y = 0; y <= 2; y++) {
     for (let x = 0; x <= 2; x++) {
-      const x_pos = (x_sq-1) * 3 + x
-      const y_pos = (y_sq-1) * 3 + y
-      if (whatIsColor(table, x_pos,y_pos) == "white") {
+      const x_pos = (x_sq - 1) * 3 + x
+      const y_pos = (y_sq - 1) * 3 + y
+      if (whatIsColor(table, x_pos, y_pos) == 'white') {
         ret = false
       }
-      if (whatIsColor(table, x_pos,y_pos) == "black") {
+      if (whatIsColor(table, x_pos, y_pos) == 'black') {
         black += 1
       }
       if (black == 9) {
@@ -82,8 +82,10 @@ export function tapCheck(table, x, y) {
   let color = re[1]
   let fl = re[0]
   let n = y * table.cols + x
-  if ((table.all[n] == "white" && fl == false) || 
-  (fl == true && color == global.plColor && table.all[n] == "white")) {
+  if (
+    (table.all[n] == 'white' && fl == false) ||
+    (fl == true && color == global.plColor && table.all[n] == 'white')
+  ) {
     return true
   } else {
     return false
@@ -97,8 +99,7 @@ export async function checker(table1, table2) {
       BOOMER(table2, fl2[1], fl2[2])
       graph.draw(table1, table2)
       await pause(1000)
-    }
-    else {
+    } else {
       break
     }
   }
@@ -123,13 +124,13 @@ function BOOM(table, x_med_sq, y_med_sq) {
     let y1 = y_centr - y_to_activated[i]
     if (x1 < 0 || y1 < 0) {
       continue
-    } 
+    }
     let two_x_medium_sq = Math.floor(x1 / 3)
     let two_y_medium_sq = Math.floor(y1 / 3)
-    let z = whatIsColor(table, x1, y1) 
+    let z = whatIsColor(table, x1, y1)
     let n = y1 * table.cols + x1
 
-    if (z == "white") {
+    if (z == 'white') {
       table.all[n] = global.plColor
       recoloring(table, two_x_medium_sq, two_y_medium_sq)
     } else {
@@ -145,13 +146,13 @@ function BOOM(table, x_med_sq, y_med_sq) {
 function clear_medium_sq(table, x_med_sq, y_med_sq) {
   for (let y = 0; y <= 2; y++) {
     for (let x = 0; x <= 2; x++) {
-      let x1 = (x_med_sq * 3) + x
-      let y1 = (y_med_sq * 3) + y
+      let x1 = x_med_sq * 3 + x
+      let y1 = y_med_sq * 3 + y
       let z = whatIsColor(table, x1, y1)
       for (let p = 0; p <= global.plColors.length - 1; p++) {
         if (z == global.plColors[p]) {
           const n = y1 * table.cols + x1
-          table.all[n] = "white"
+          table.all[n] = 'white'
         }
       }
     }
@@ -160,17 +161,17 @@ function clear_medium_sq(table, x_med_sq, y_med_sq) {
 
 export function recoloring(table, x_med_sq, y_med_sq) {
   let scoresColor = {
-  "blue":scores.blueScore, 
-  "red":scores.redScore, 
-  "green":scores.greenScore, 
-  "violet":scores.violetScore
+    blue: scores.blueScore,
+    red: scores.redScore,
+    green: scores.greenScore,
+    violet: scores.violetScore,
   }
-  const cl = ["blueScore", "redScore", "greenScore", "violetScore"]
+  const cl = ['blueScore', 'redScore', 'greenScore', 'violetScore']
 
   for (let y = 0; y <= 2; y++) {
     for (let x = 0; x <= 2; x++) {
-      const x1 = (x_med_sq*3) + x
-      const y1 = (y_med_sq*3) + y
+      const x1 = x_med_sq * 3 + x
+      const y1 = y_med_sq * 3 + y
       const a = whatIsColor(table, x1, y1)
       for (let p = 0; p <= global.plColors.length - 1; p++) {
         if (a == global.plColors[p]) {
@@ -188,11 +189,11 @@ export function recoloring(table, x_med_sq, y_med_sq) {
       }
     }
   }
-  graph.showAllScores()
+  graph.showScores(colorsCount)
 }
 
 function kick(colors) {
-  const clean = global.plColors.filter((item) => (colors.includes(item)))
+  const clean = global.plColors.filter((item) => colors.includes(item))
   global.plColors = clean
 }
 
@@ -218,5 +219,4 @@ export function gameEndCheck(table) {
   } else {
     return false
   }
-
 }

@@ -1,28 +1,28 @@
 // Test import of styles
 // https://stackoverflow.com/questions/53558916/babel-7-referenceerror-regeneratorruntime-is-not-defined
-import "core-js/stable";
-import "regenerator-runtime/runtime";
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
 
 // import '@/styles/index.scss'
 import '@/styles/style.css'
 import '@/styles/styles.css'
 
-import $ from "jquery"
-import Table from "./js/Table"
-import DemoMap from "./js/DemoMap"
+import $ from 'jquery'
+import Table from './js/Table'
+import DemoMap from './js/DemoMap'
 // import * as consts from "./js/const"
-import * as graph from "./js/graph"
-import {global} from "./js/Global"
+import * as graph from './js/graph'
+import { global } from './js/Global'
 
 let table1 = null
-let first = [];
+let first = []
 let onReady = false
 let demo = false
 let demoTable = null
 
-window.tap = async function(row,col) {
-  const x = row;
-  const y = col;
+window.tap = async function (row, col) {
+  const x = row
+  const y = col
   if (onReady) return
   onReady = true
   if (demo == true) {
@@ -42,33 +42,33 @@ window.threeXthree = function () {
   graph.PopUpMapHide()
   table1 = new Table('myTable', 8, 8)
   table1.generate()
-  first = $("td");
+  first = $('td')
   graph.TbShow()
   global.standartAll = [...table1.all]
 }
 
-window.sixXsix = function() {
+window.sixXsix = function () {
   graph.popUpStartHide()
   graph.hideAllScores()
   graph.PopUpPlayersShow()
   graph.PopUpMapHide()
   table1 = new Table('myTable', 17, 17)
   table1.generate()
-  first = $("td");
+  first = $('td')
   graph.TbShow()
   global.standartAll = [...table1.all]
 }
 
-window.CreateMap = function() {
-  graph.hideAll();
+window.CreateMap = function () {
+  graph.hideAll()
   graph.genShow()
 }
 
 window.generate = function () {
   const c = getCols()
   const r = getRow()
-  if (r <= 0 || c <= 0 || (r == 1 || c < 3)) return null
-  $("#popupdo").show();
+  if (r <= 0 || c <= 0 || r == 1 || c < 3) return null
+  $('#popupdo').show()
   graph.genHide()
   StartCreate(r, c)
 }
@@ -78,10 +78,10 @@ function StartCreate(r, c) {
   demoTable = new DemoMap('myDemoTable', r, c)
   demoTable.mapGenerate()
   demo = true
-  first = $("td")
+  first = $('td')
 }
 
-window.done = function() {
+window.done = function () {
   doneHiden()
   demoTable.cosmetyc()
   const r = parseInt(getRow())
@@ -92,56 +92,55 @@ window.done = function() {
   global.standartAll = [...demoTable.all]
   table1.createFromAll()
   const tableObj = $(`#myDemoTable`)
-  tableObj.html("<div hidden></div>")
-  first = $("td")
+  tableObj.html('<div hidden></div>')
+  first = $('td')
   graph.TbShow()
   graph.PopUpPlayersShow()
 }
 
 function doneHiden() {
-  $("#popupdo").hide();
+  $('#popupdo').hide()
   // graph.PopUpPlayersShow()
 }
 
-window.twoPlayers = function() {
-  players(1)
-}
-window.threePlayers = function() {
+window.twoPlayers = function () {
   players(2)
 }
-window.fourPlayers = function() {
+window.threePlayers = function () {
   players(3)
 }
+window.fourPlayers = function () {
+  players(4)
+}
 function players(inp) {
-  graph.showAllScores()
-  graph.PopUpPlayersHide()
-  const plCl = ["red", "blue", "green", "violet"]
+  const plCl = ['red', 'blue', 'green', 'violet']
   global.plColors = []
-  for (let i = 0; i <= inp; i++) {
+  for (let i = 0; i <= inp - 1; i++) {
     global.plColors.push(plCl[i])
   }
+  graph.showScores(inp)
+  graph.PopUpPlayersHide()
 }
 
 function getRow() {
-  let r = (document.getElementById('row').value) * 3 - 1
+  let r = document.getElementById('row').value * 3 - 1
   return r
 }
 
 function getCols() {
-  return (document.getElementById('col').value) * 3 - 1
+  return document.getElementById('col').value * 3 - 1
 }
 
-window.PopUpStart = function (){
+window.PopUpStart = function () {
   graph.popUpStartHide()
   table1.fullRestart()
   graph.PopUpPlayersShow()
 }
 
-window.selectMap = function (){
+window.selectMap = function () {
   graph.PopUpPlayersHide()
   graph.PopUpMapShow()
   graph.TbHide()
   table1.fullRestart()
   table1.deleteTable()
-  // $("#popupsc").show();
 }

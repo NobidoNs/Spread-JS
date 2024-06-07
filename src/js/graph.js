@@ -1,21 +1,21 @@
-import $ from "jquery"
-import {scores} from "./const"
+import $ from 'jquery'
+import { scores, colorsCount } from './const'
 
 // All Shows and Hides
 export const chColor = (x, y, color, table) => {
-  const first = $("td");
+  const first = $('td')
   let n = y * table.cols + x
-  let el = first[n]; // todo: global letiable
-  $(el).css('background-color', color);
+  let el = first[n] // todo: global letiable
+  $(el).css('background-color', color)
   table.all[n] = color
 }
 
 export function draw(table1, table2) {
   for (let n = 0; n < table2.all.length - 1; n++) {
     let y = Math.floor(n / table1.cols)
-    let x = n - y*table1.cols
+    let x = n - y * table1.cols
     let cl = table2.all[n]
-    chColor(x, y, cl,table1)
+    chColor(x, y, cl, table1)
   }
 }
 
@@ -29,65 +29,69 @@ export function hideAll() {
   this.DemoTbHide()
 }
 
-export function PopUpWinShow(inp){
-  const out = inp + " Win"
+export function PopUpWinShow(inp) {
+  const out = inp + ' Win'
   popUpStartShow()
-  $("#whoIsWin").html(out)
+  $('#whoIsWin').html(out)
 }
 
-export function showAllScores() {
-  const {blueScore, redScore, greenScore, violetScore} = scores
+export function showScores(count) {
+  const delCount = colorsCount - count
+  const { blueScore, redScore, greenScore, violetScore } = scores
   const plScores = [blueScore, redScore, greenScore, violetScore]
-  const plNames = ["blueScore", "redScore", "greenScore", "violetScore"]
-  $("#popupsc").show()
+  const plNames = ['blueScore', 'violetScore', 'greenScore', 'redScore']
+  const revPlNames = ['violetScore', 'greenScore', 'redScore', 'blueScore']
+  $('#popupsc').show()
+  for (let i = 0; i <= delCount - 1; i++) {
+    $(`#${revPlNames[i]}`).hide()
+  }
   for (let i = 0; i <= plNames.length; i++) {
-    const out = plNames[i] + " " + plScores[i]
+    const out = plNames[i] + ' ' + plScores[i]
     $(`#${plNames[i]}`).html(out)
   }
 }
 export function hideAllScores() {
-  $("#popupsc").hide()
+  $('#popupsc').hide()
 }
-
 
 export function DemoTbHide() {
-  $("#myDemoTable").hide();
+  $('#myDemoTable').hide()
 }
 export function DemoTbShow() {
-  $("#myDemoTable").show();
+  $('#myDemoTable').show()
 }
 export function genHide() {
-  $("#popupge").hide();
-  $("#inp").hide();
+  $('#popupge').hide()
+  $('#inp').hide()
 }
 export function genShow() {
-  $("#popupge").show();
-  $("#inp").show();
+  $('#popupge').show()
+  $('#inp').show()
 }
 export function TbHide() {
-  $("#myTable").hide();
+  $('#myTable').hide()
 }
 export function TbShow() {
-  $("#myTable").show();
+  $('#myTable').show()
 }
 export function PopUpMapHide() {
-  $("#popupmp").hide();
+  $('#popupmp').hide()
 }
 export function PopUpMapShow() {
-  $("#popupmp").show();
+  $('#popupmp').show()
 }
-export function PopUpPlayersShow(){
-  $("#popuppl").show();
+export function PopUpPlayersShow() {
+  $('#popuppl').show()
 }
 
-export function PopUpPlayersHide(){
-  $("#popuppl").hide();
+export function PopUpPlayersHide() {
+  $('#popuppl').hide()
 }
 
 export function popUpStartHide() {
-  $("#popupst").hide()
+  $('#popupst').hide()
 }
 
 export function popUpStartShow() {
-  $("#popupst").show()
+  $('#popupst').show()
 }
